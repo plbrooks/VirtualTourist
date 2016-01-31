@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--Travel Locations Map-->
@@ -21,10 +22,10 @@
             </objects>
             <point key="canvasLocation" x="-264" y="-536"/>
         </scene>
-        <!--View Controller-->
+        <!--Travel LocationsVC-->
         <scene sceneID="YMi-Sz-xBh">
             <objects>
-                <viewController id="FiY-bA-kxd" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="TravelLocationsVC" id="FiY-bA-kxd" customClass="TravelLocationsVC" customModule="VirtualTourist" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="u3V-1J-wUy"/>
                         <viewControllerLayoutGuide type="bottom" id="esI-Ts-zhs"/>
@@ -32,10 +33,48 @@
                     <view key="view" contentMode="scaleToFill" id="1P5-IU-hi9">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="2aX-WW-iTY">
+                                <rect key="frame" x="0.0" y="64" width="600" height="536"/>
+                            </mapView>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="1Cc-va-Lvg">
+                                <rect key="frame" x="290" y="290" width="20" height="20"/>
+                            </activityIndicatorView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gd5-4F-oAe">
+                                <rect key="frame" x="0.0" y="557" width="600" height="43"/>
+                                <color key="backgroundColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="43" id="fAe-aU-MQf"/>
+                                </constraints>
+                                <state key="normal" title="Tap Pins To Delete">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="edit:" destination="FiY-bA-kxd" eventType="touchUpInside" id="4Te-cs-iG0"/>
+                                </connections>
+                            </button>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailingMargin" secondItem="gd5-4F-oAe" secondAttribute="trailing" constant="-20" id="8hE-V9-6uX"/>
+                            <constraint firstItem="1Cc-va-Lvg" firstAttribute="centerX" secondItem="2aX-WW-iTY" secondAttribute="centerX" id="8o7-f4-aPA"/>
+                            <constraint firstItem="1Cc-va-Lvg" firstAttribute="centerY" secondItem="1P5-IU-hi9" secondAttribute="centerY" id="RDt-pt-2tr"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="2aX-WW-iTY" secondAttribute="trailing" constant="-20" id="SfP-5O-pAz"/>
+                            <constraint firstItem="2aX-WW-iTY" firstAttribute="leading" secondItem="1P5-IU-hi9" secondAttribute="leadingMargin" constant="-20" id="YYO-KL-7DR"/>
+                            <constraint firstItem="gd5-4F-oAe" firstAttribute="leading" secondItem="1P5-IU-hi9" secondAttribute="leadingMargin" constant="-20" id="YsU-L3-xP5"/>
+                            <constraint firstItem="2aX-WW-iTY" firstAttribute="top" secondItem="u3V-1J-wUy" secondAttribute="bottom" id="aCG-rU-xua"/>
+                            <constraint firstItem="esI-Ts-zhs" firstAttribute="top" secondItem="2aX-WW-iTY" secondAttribute="bottom" id="jCB-Ns-NiZ"/>
+                            <constraint firstItem="gd5-4F-oAe" firstAttribute="bottom" secondItem="esI-Ts-zhs" secondAttribute="top" id="wpe-Vc-1b0"/>
+                        </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="orp-G4-80I"/>
+                    <navigationItem key="navigationItem" id="orp-G4-80I">
+                        <barButtonItem key="rightBarButtonItem" title="Edit" id="PTH-ZF-ap8"/>
+                    </navigationItem>
                     <connections>
+                        <outlet property="activityIndicator" destination="1Cc-va-Lvg" id="7q7-DW-tZ1"/>
+                        <outlet property="editButton" destination="PTH-ZF-ap8" id="zEc-SJ-wkt"/>
+                        <outlet property="mapView" destination="2aX-WW-iTY" id="Lvz-1a-QuA"/>
+                        <outlet property="tapPinsToDeleteButton" destination="gd5-4F-oAe" id="1n5-iq-Kh3"/>
                         <segue destination="lsb-rc-zK8" kind="show" identifier="Collection View Segue" id="vQ8-yq-ARV"/>
                     </connections>
                 </viewController>
@@ -46,7 +85,7 @@
         <!--Collection View Controller-->
         <scene sceneID="pru-bf-Lga">
             <objects>
-                <collectionViewController id="lsb-rc-zK8" sceneMemberID="viewController">
+                <collectionViewController storyboardIdentifier="PhotoAlbumVC" id="lsb-rc-zK8" sceneMemberID="viewController">
                     <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="AwD-Cn-2y2">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
