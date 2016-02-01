@@ -9,6 +9,7 @@
         <!--Travel Locations Map-->
         <scene sceneID="wl2-j1-5m1">
             <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="lDc-6l-Xth" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <navigationController title="Travel Locations Map" id="7EF-Qs-r9l" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="jkf-eW-XAn">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -18,7 +19,6 @@
                         <segue destination="FiY-bA-kxd" kind="relationship" relationship="rootViewController" id="j9j-di-eNy"/>
                     </connections>
                 </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="lDc-6l-Xth" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-264" y="-536"/>
         </scene>
@@ -50,7 +50,7 @@
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="edit:" destination="FiY-bA-kxd" eventType="touchUpInside" id="4Te-cs-iG0"/>
+                                    <action selector="deletePins:" destination="FiY-bA-kxd" eventType="touchUpInside" id="ICL-wS-2Qm"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -68,13 +68,20 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="orp-G4-80I">
-                        <barButtonItem key="rightBarButtonItem" title="Edit" id="PTH-ZF-ap8"/>
+                        <barButtonItem key="rightBarButtonItem" title="Edit" id="PTH-ZF-ap8">
+                            <connections>
+                                <action selector="edit:" destination="FiY-bA-kxd" id="A6Z-wS-52K"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="activityIndicator" destination="1Cc-va-Lvg" id="7q7-DW-tZ1"/>
-                        <outlet property="editButton" destination="PTH-ZF-ap8" id="zEc-SJ-wkt"/>
+                        <outlet property="editButton" destination="PTH-ZF-ap8" id="i6M-Hs-Dre"/>
                         <outlet property="mapView" destination="2aX-WW-iTY" id="Lvz-1a-QuA"/>
+                        <outlet property="mapViewBottom" destination="jCB-Ns-NiZ" id="G7k-6c-vyq"/>
+                        <outlet property="mapViewTop" destination="aCG-rU-xua" id="Ln5-O0-anN"/>
                         <outlet property="tapPinsToDeleteButton" destination="gd5-4F-oAe" id="1n5-iq-Kh3"/>
+                        <outlet property="tapPinsToDeleteButtonBottom" destination="wpe-Vc-1b0" id="cug-fE-j5w"/>
                         <segue destination="lsb-rc-zK8" kind="show" identifier="Collection View Segue" id="vQ8-yq-ARV"/>
                     </connections>
                 </viewController>

@@ -16,13 +16,21 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate {
     @IBOutlet weak var tapPinsToDeleteButton: UIButton!
     @IBOutlet weak var editButton: UIBarButtonItem!
     
+    @IBOutlet weak var mapViewTop: NSLayoutConstraint!
+    @IBOutlet weak var mapViewBottom: NSLayoutConstraint!
+    @IBOutlet weak var tapPinsToDeleteButtonBottom: NSLayoutConstraint!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         mapView.delegate = self
-         tapPinsToDeleteButton.hidden = true
     }
 
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        tapPinsToDeleteButton.hidden = true
+        tapPinsToDeleteButtonBottom.constant = tapPinsToDeleteButton.frame.height   // set just outside view
+    }
+    
     /********************************************************************************************************
      * Set up annotation visuals                                                                            *
      ********************************************************************************************************/
@@ -42,10 +50,35 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate {
     }
 
     @IBAction func edit(sender: AnyObject) {
-        print("here")
-        tapPinsToDeleteButton.hidden = false
+        switch editButton.title! {
+        case "Edit":
+            editButton.title = "Done"
+            
+            UIView.animateWithDuration(0.5, delay: 0.0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
+                self.view.layoutIfNeeded()
+                
+                
+                
+                self.tapPinsToDeleteButton.hidden = true
+                self.tapPinsToDeleteButtonBottom.constant -= self.tapPinsToDeleteButton.frame.height
+                
+                self.view.layoutIfNeeded()
+                }, completion: nil)
+
+            
+            tapPinsToDeleteButton.hidden = false
+        case "Done":
+            editButton.title = "Edit"
+            tapPinsToDeleteButtonBottom.constant = tapPinsToDeleteButton.frame.height   // set just outside view
+            tapPinsToDeleteButton.hidden = true
+        default:
+            print("error")
+        }
     }
     
+    @IBAction func deletePins(sender: AnyObject) {
+        editButton.title = "Done"
+    }
     /********************************************************************************************************
      * When the map starts renders show the activity indicator                                              *
      ********************************************************************************************************/
