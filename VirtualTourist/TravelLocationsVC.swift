@@ -20,9 +20,15 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate {
     @IBOutlet weak var mapViewBottom: NSLayoutConstraint!
     @IBOutlet weak var tapPinsToDeleteButtonBottom: NSLayoutConstraint!
     
+    var mapViewTopStartPosition: CGFloat = 0
+    var mapViewBottomStartPosition: CGFloat = 0
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         mapView.delegate = self
+        mapViewTopStartPosition = mapViewTop.constant       // store initial value of the mapView top margin constraint
+        mapViewBottomStartPosition = mapViewBottom.constant // store initial value of the mapView bottom margin constraint
     }
 
     override func viewWillAppear(animated: Bool) {
@@ -40,8 +46,6 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate {
         if pinView == nil {
             pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
             pinView!.canShowCallout = true
-            //pinView!.pinTintColor = UIColor.redColor()
-            //pinView!.rightCalloutAccessoryView = UIButton(type: .DetailDisclosure) as UIView
         }
         else {
             pinView!.annotation = annotation
@@ -54,10 +58,12 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate {
         case "Edit":
             editButton.title = "Done"
             
+            self.view.layoutIfNeeded()
             UIView.animateWithDuration(0.5, delay: 0.0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
-                self.view.layoutIfNeeded()
+               
                 
-                
+                self.mapViewTop.constant -= self.tapPinsToDeleteButton.frame.height
+                //self.mapViewBottom.constant -= self.tapPinsToDeleteButton.frame.height
                 
                 self.tapPinsToDeleteButton.hidden = true
                 self.tapPinsToDeleteButtonBottom.constant -= self.tapPinsToDeleteButton.frame.height
@@ -69,6 +75,10 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate {
             tapPinsToDeleteButton.hidden = false
         case "Done":
             editButton.title = "Edit"
+            
+            self.mapViewTop.constant = self.mapViewTopStartPosition
+            self.mapViewBottom.constant = self.mapViewBottomStartPosition
+            
             tapPinsToDeleteButtonBottom.constant = tapPinsToDeleteButton.frame.height   // set just outside view
             tapPinsToDeleteButton.hidden = true
         default:

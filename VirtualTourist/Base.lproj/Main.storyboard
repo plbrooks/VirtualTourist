@@ -22,7 +22,7 @@
             </objects>
             <point key="canvasLocation" x="-264" y="-536"/>
         </scene>
-        <!--Travel LocationsVC-->
+        <!--Virtual Tourist-->
         <scene sceneID="YMi-Sz-xBh">
             <objects>
                 <viewController storyboardIdentifier="TravelLocationsVC" id="FiY-bA-kxd" customClass="TravelLocationsVC" customModule="VirtualTourist" customModuleProvider="target" sceneMemberID="viewController">
@@ -67,7 +67,7 @@
                             <constraint firstItem="gd5-4F-oAe" firstAttribute="bottom" secondItem="esI-Ts-zhs" secondAttribute="top" id="wpe-Vc-1b0"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="orp-G4-80I">
+                    <navigationItem key="navigationItem" title="Virtual Tourist" id="orp-G4-80I">
                         <barButtonItem key="rightBarButtonItem" title="Edit" id="PTH-ZF-ap8">
                             <connections>
                                 <action selector="edit:" destination="FiY-bA-kxd" id="A6Z-wS-52K"/>
