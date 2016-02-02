@@ -60,12 +60,20 @@
                             <constraint firstItem="1Cc-va-Lvg" firstAttribute="centerX" secondItem="2aX-WW-iTY" secondAttribute="centerX" id="8o7-f4-aPA"/>
                             <constraint firstItem="1Cc-va-Lvg" firstAttribute="centerY" secondItem="1P5-IU-hi9" secondAttribute="centerY" id="RDt-pt-2tr"/>
                             <constraint firstAttribute="trailingMargin" secondItem="2aX-WW-iTY" secondAttribute="trailing" constant="-20" id="SfP-5O-pAz"/>
+                            <constraint firstItem="2aX-WW-iTY" firstAttribute="top" secondItem="1P5-IU-hi9" secondAttribute="topMargin" constant="64" id="Uxc-1e-fZi"/>
                             <constraint firstItem="2aX-WW-iTY" firstAttribute="leading" secondItem="1P5-IU-hi9" secondAttribute="leadingMargin" constant="-20" id="YYO-KL-7DR"/>
                             <constraint firstItem="gd5-4F-oAe" firstAttribute="leading" secondItem="1P5-IU-hi9" secondAttribute="leadingMargin" constant="-20" id="YsU-L3-xP5"/>
                             <constraint firstItem="2aX-WW-iTY" firstAttribute="top" secondItem="u3V-1J-wUy" secondAttribute="bottom" id="aCG-rU-xua"/>
+                            <constraint firstItem="2aX-WW-iTY" firstAttribute="bottom" secondItem="1P5-IU-hi9" secondAttribute="bottomMargin" id="dx6-f0-7VM"/>
                             <constraint firstItem="esI-Ts-zhs" firstAttribute="top" secondItem="2aX-WW-iTY" secondAttribute="bottom" id="jCB-Ns-NiZ"/>
                             <constraint firstItem="gd5-4F-oAe" firstAttribute="bottom" secondItem="esI-Ts-zhs" secondAttribute="top" id="wpe-Vc-1b0"/>
                         </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="aCG-rU-xua"/>
+                                <exclude reference="jCB-Ns-NiZ"/>
+                            </mask>
+                        </variation>
                     </view>
                     <navigationItem key="navigationItem" title="Virtual Tourist" id="orp-G4-80I">
                         <barButtonItem key="rightBarButtonItem" title="Edit" id="PTH-ZF-ap8">
@@ -78,8 +86,8 @@
                         <outlet property="activityIndicator" destination="1Cc-va-Lvg" id="7q7-DW-tZ1"/>
                         <outlet property="editButton" destination="PTH-ZF-ap8" id="i6M-Hs-Dre"/>
                         <outlet property="mapView" destination="2aX-WW-iTY" id="Lvz-1a-QuA"/>
-                        <outlet property="mapViewBottom" destination="jCB-Ns-NiZ" id="G7k-6c-vyq"/>
-                        <outlet property="mapViewTop" destination="aCG-rU-xua" id="Ln5-O0-anN"/>
+                        <outlet property="mapViewBottom" destination="dx6-f0-7VM" id="s5N-RD-QO8"/>
+                        <outlet property="mapViewTop" destination="Uxc-1e-fZi" id="jLE-zT-1WU"/>
                         <outlet property="tapPinsToDeleteButton" destination="gd5-4F-oAe" id="1n5-iq-Kh3"/>
                         <outlet property="tapPinsToDeleteButtonBottom" destination="wpe-Vc-1b0" id="cug-fE-j5w"/>
                         <segue destination="lsb-rc-zK8" kind="show" identifier="Collection View Segue" id="vQ8-yq-ARV"/>

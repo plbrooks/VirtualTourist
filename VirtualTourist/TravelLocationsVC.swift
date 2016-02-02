@@ -63,7 +63,7 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate {
                
                 
                 self.mapViewTop.constant -= self.tapPinsToDeleteButton.frame.height
-                //self.mapViewBottom.constant -= self.tapPinsToDeleteButton.frame.height
+                self.mapViewBottom.constant -= self.tapPinsToDeleteButton.frame.height
                 
                 self.tapPinsToDeleteButton.hidden = true
                 self.tapPinsToDeleteButtonBottom.constant -= self.tapPinsToDeleteButton.frame.height
