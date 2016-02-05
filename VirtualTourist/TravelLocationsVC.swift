@@ -113,7 +113,7 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
             ]
             let _ = Pin(dictionary: dictionary, context: sharedContext)
             print("Creating pin at location \(coordinate)")
-            CoreDataStackManager.sharedInstance().saveContext()
+            CoreDataStackManager.sharedInstance.saveContext()
             
             var annotations = [MKPointAnnotation]()
             let annotation = MKPointAnnotation()
@@ -174,7 +174,7 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
     // MARK: - Core Data Convenience. This will be useful for fetching. And for adding and saving objects as well.
     
     var sharedContext: NSManagedObjectContext {
-        return CoreDataStackManager.sharedInstance().managedObjectContext
+        return CoreDataStackManager.sharedInstance.managedObjectContext
     }
     
     // Step 1 - Add the lazy fetchedResultsController property. See the reference sheet in the lesson if you

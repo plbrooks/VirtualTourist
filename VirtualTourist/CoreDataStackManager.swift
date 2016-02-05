@@ -9,32 +9,23 @@
 import Foundation
 import CoreData
 
-/************************************************************************************************/
-/* The CoreDataStackManager contains the the fundamental CoreData code                          */
-/************************************************************************************************/
+/****************************************************************************************************************/
+/* The CoreDataStackManager contains the the fundamental CoreData code                                          */
+/****************************************************************************************************************/
 
-private let SQLITE_FILE_NAME = "VirtualTourist.sqlite"          // database name
+private let SQLITE_FILE_NAME = Constants.databaseName           // database name
 
-class CoreDataStackManager {
+class CoreDataStackManager: NSObject {
+    static let sharedInstance = CoreDataStackManager()          // set up shared instance class
+    private override init() {}                                  // ensure noone will init
     
     
-// MARK: - Shared Instance
-    
-    class func sharedInstance() -> CoreDataStackManager {
-        struct Static {
-            static let instance = CoreDataStackManager()
-        }
-    return Static.instance
-    }
-    
-    // MARK: - The Core Data stack. The code has been moved, unaltered, from the AppDelegate.
-    
+    /****************************************************************************************************************/
+    /*  Instantiate the applicationDocumentsDirectory property                                                      */
+    /****************************************************************************************************************/
     lazy var applicationDocumentsDirectory: NSURL = {
-        
         print("Instantiating the applicationDocumentsDirectory property")
-        
         let urls = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)
-
         return urls[urls.count-1]
     }()
     

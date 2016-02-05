@@ -21,6 +21,7 @@
 		D02A7A1F1C6120AB00510439 /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = D02A7A1E1C6120AB00510439 /* ImageCache.swift */; };
 		D02A7A231C6130D500510439 /* VirtualTourist.swift in Sources */ = {isa = PBXBuildFile; fileRef = D02A7A221C6130D500510439 /* VirtualTourist.swift */; };
 		D02A7A251C61314B00510439 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = D02A7A241C61314B00510439 /* Config.swift */; };
+		D052C8F01C64F97B002C9DB5 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D052C8EF1C64F97B002C9DB5 /* Constants.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +62,7 @@
 		D02A7A1E1C6120AB00510439 /* ImageCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
 		D02A7A221C6130D500510439 /* VirtualTourist.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VirtualTourist.swift; sourceTree = "<group>"; };
 		D02A7A241C61314B00510439 /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Config.swift; path = ../Config.swift; sourceTree = "<group>"; };
+		D052C8EF1C64F97B002C9DB5 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -113,7 +115,7 @@
 			children = (
 				D02A79E61C5C730800510439 /* AppDelegate.swift */,
 				D02A79E81C5C730800510439 /* TravelLocationsVC.swift */,
-				D02A7A141C60FEC800510439 /* CoreDataStackManager.swift */,
+				D052C8F21C64F9B9002C9DB5 /* SharedServices */,
 				D02A7A241C61314B00510439 /* Config.swift */,
 				D02A79EA1C5C730800510439 /* Main.storyboard */,
 				D02A7A221C6130D500510439 /* VirtualTourist.swift */,
@@ -152,6 +154,15 @@
 				D02A7A1E1C6120AB00510439 /* ImageCache.swift */,
 			);
 			name = Model;
+			sourceTree = "<group>";
+		};
+		D052C8F21C64F9B9002C9DB5 /* SharedServices */ = {
+			isa = PBXGroup;
+			children = (
+				D052C8EF1C64F97B002C9DB5 /* Constants.swift */,
+				D02A7A141C60FEC800510439 /* CoreDataStackManager.swift */,
+			);
+			name = SharedServices;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -290,6 +301,7 @@
 				D02A79E91C5C730800510439 /* TravelLocationsVC.swift in Sources */,
 				D01905D41C62A6D3007B4E2B /* Photo.swift in Sources */,
 				D02A7A251C61314B00510439 /* Config.swift in Sources */,
+				D052C8F01C64F97B002C9DB5 /* Constants.swift in Sources */,
 				D02A79E71C5C730800510439 /* AppDelegate.swift in Sources */,
 				D02A7A151C60FEC800510439 /* CoreDataStackManager.swift in Sources */,
 				D01905D21C62A13E007B4E2B /* Pin.swift in Sources */,
