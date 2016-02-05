@@ -9,7 +9,6 @@
         <!--Travel Locations Map-->
         <scene sceneID="wl2-j1-5m1">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="lDc-6l-Xth" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <navigationController title="Travel Locations Map" id="7EF-Qs-r9l" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="jkf-eW-XAn">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -19,6 +18,7 @@
                         <segue destination="FiY-bA-kxd" kind="relationship" relationship="rootViewController" id="j9j-di-eNy"/>
                     </connections>
                 </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="lDc-6l-Xth" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-264" y="-536"/>
         </scene>
@@ -36,6 +36,10 @@
                         <subviews>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="2aX-WW-iTY">
                                 <rect key="frame" x="0.0" y="64" width="600" height="536"/>
+                                <gestureRecognizers/>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="HNe-Ja-JHr" appends="YES" id="kwn-QM-BfP"/>
+                                </connections>
                             </mapView>
                             <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="1Cc-va-Lvg">
                                 <rect key="frame" x="290" y="290" width="20" height="20"/>
@@ -43,6 +47,7 @@
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gd5-4F-oAe">
                                 <rect key="frame" x="0.0" y="557" width="600" height="43"/>
                                 <color key="backgroundColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <gestureRecognizers/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="43" id="fAe-aU-MQf"/>
                                 </constraints>
@@ -55,6 +60,7 @@
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <gestureRecognizers/>
                         <constraints>
                             <constraint firstAttribute="trailingMargin" secondItem="gd5-4F-oAe" secondAttribute="trailing" constant="-20" id="8hE-V9-6uX"/>
                             <constraint firstItem="1Cc-va-Lvg" firstAttribute="centerX" secondItem="2aX-WW-iTY" secondAttribute="centerX" id="8o7-f4-aPA"/>
@@ -94,6 +100,11 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="J1x-cV-k2I" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="2" id="HNe-Ja-JHr">
+                    <connections>
+                        <action selector="handleLongPressGesture:" destination="FiY-bA-kxd" id="7Og-Xn-Bz3"/>
+                    </connections>
+                </pongPressGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="448" y="-536"/>
         </scene>

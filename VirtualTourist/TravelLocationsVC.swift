@@ -8,8 +8,9 @@
 
 import UIKit
 import MapKit
+import CoreData
 
-class TravelLocationsVC: UIViewController, MKMapViewDelegate {
+class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControllerDelegate {
     
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
@@ -29,12 +30,19 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate {
         mapView.delegate = self
         mapViewTopStartPosition = mapViewTop.constant       // store initial value of the mapView top margin constraint
         mapViewBottomStartPosition = mapViewBottom.constant // store initial value of the mapView bottom margin constraint
+        
+        // DO THE FOLLOWING OR NOT?
+        
+        fetchedResultsController.delegate = self
+        
+        getPins()
     }
 
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         tapPinsToDeleteButton.hidden = true
         tapPinsToDeleteButtonBottom.constant = tapPinsToDeleteButton.frame.height   // set just outside view
+        activityIndicator.startAnimating()
     }
     
     /********************************************************************************************************
@@ -45,7 +53,7 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate {
         var pinView = mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId) as? MKPinAnnotationView
         if pinView == nil {
             pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
-            pinView!.canShowCallout = true
+            pinView!.canShowCallout = false
         }
         else {
             pinView!.annotation = annotation
@@ -89,6 +97,60 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate {
     @IBAction func deletePins(sender: AnyObject) {
         editButton.title = "Done"
     }
+    
+    
+    
+    @IBAction func handleLongPressGesture(sender: AnyObject) {
+        if sender.state == UIGestureRecognizerState.Began {
+            let touchLocation = sender.locationInView(mapView)
+            let coordinate = mapView.convertPoint(touchLocation, toCoordinateFromView: mapView)
+            //let coor = CLLocationCoordinate2D
+
+            let dictionary: [String : AnyObject] = [
+                //Pin.Keys.Location   : NSValue(MKCoordinate: coordinate),
+                Pin.Keys.Latitude   : coordinate.latitude,
+                Pin.Keys.Longitude  : coordinate.longitude
+            ]
+            let _ = Pin(dictionary: dictionary, context: sharedContext)
+            print("Creating pin at location \(coordinate)")
+            CoreDataStackManager.sharedInstance().saveContext()
+            
+            var annotations = [MKPointAnnotation]()
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = coordinate
+            annotations.append(annotation)
+            mapView.addAnnotations(annotations)
+        }
+    }
+    
+    
+    func getPins() {
+        
+        let request = NSFetchRequest(entityName: "Pin")
+        request.sortDescriptors = [NSSortDescriptor(key: "latitude", ascending: true)]
+        let context = self.sharedContext
+        
+        do {
+            let pins = try context.executeFetchRequest(request) as! [Pin]
+            if (pins.count > 0) {
+                var annotations = [MKPointAnnotation]()
+                for pin: Pin in pins {
+                    let annotation = MKPointAnnotation()
+                    let coordinate  = CLLocationCoordinate2D(latitude: pin.latitude as Double, longitude: pin.longitude as Double)
+                    annotation.coordinate = coordinate
+                    annotations.append(annotation)
+                }
+                mapView.addAnnotations(annotations)
+            } else {
+                print("No Users")
+            }
+        } catch let error as NSError {
+            // failure
+            print("Fetch failed: \(error.localizedDescription)")
+        }
+    }
+    
+    
     /********************************************************************************************************
      * When the map starts renders show the activity indicator                                              *
      ********************************************************************************************************/
@@ -107,6 +169,34 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate {
         activityIndicator.stopAnimating()
         activityIndicator.hidden = true
     }
+
+// MARK: - Core Data Stuff
+    // MARK: - Core Data Convenience. This will be useful for fetching. And for adding and saving objects as well.
+    
+    var sharedContext: NSManagedObjectContext {
+        return CoreDataStackManager.sharedInstance().managedObjectContext
+    }
+    
+    // Step 1 - Add the lazy fetchedResultsController property. See the reference sheet in the lesson if you
+    // want additional help creating this property.
+    
+    lazy var fetchedResultsController: NSFetchedResultsController = {
+        
+        let fetchRequest = NSFetchRequest(entityName: "Pin")
+        
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "latitude", ascending: true)]
+        
+        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
+            managedObjectContext: self.sharedContext,
+            sectionNameKeyPath: nil,
+            cacheName: nil)
+        
+        return fetchedResultsController
+        
+    }()
+    
+
+
 
 }
 
