@@ -10,4 +10,8 @@ import Foundation
 
 class Constants: NSObject {
     static let databaseName = "VirtualTourist.sqlite"
+    struct modelURL {
+        static let name = "Model"
+        static let ext = "momd"
+    }
 }
