@@ -131,6 +131,9 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
         }
     }
     
+    /********************************************************************************************************
+     * A pin has been selected, go to the Photos VC and pass the pin location                               *
+     ********************************************************************************************************/
     func mapView(mapView: MKMapView,
         didSelectAnnotationView view: MKAnnotationView) {
         let controller =
