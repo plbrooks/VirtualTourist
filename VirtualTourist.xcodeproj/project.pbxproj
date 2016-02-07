@@ -25,6 +25,7 @@
 		D052C8F51C650111002C9DB5 /* Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = D052C8F41C650111002C9DB5 /* Status.swift */; };
 		D052C8F81C653A7F002C9DB5 /* SharedServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = D052C8F71C653A7F002C9DB5 /* SharedServices.swift */; };
 		D052C8FA1C653BF8002C9DB5 /* SharedMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = D052C8F91C653BF8002C9DB5 /* SharedMethod.swift */; };
+		D052C8FD1C66AC4D002C9DB5 /* PhotoAlbumVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = D052C8FC1C66AC4D002C9DB5 /* PhotoAlbumVC.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,6 +70,7 @@
 		D052C8F41C650111002C9DB5 /* Status.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Status.swift; sourceTree = "<group>"; };
 		D052C8F71C653A7F002C9DB5 /* SharedServices.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharedServices.swift; sourceTree = "<group>"; };
 		D052C8F91C653BF8002C9DB5 /* SharedMethod.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharedMethod.swift; sourceTree = "<group>"; };
+		D052C8FC1C66AC4D002C9DB5 /* PhotoAlbumVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoAlbumVC.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,12 +124,12 @@
 				D02A79E61C5C730800510439 /* AppDelegate.swift */,
 				D02A79EA1C5C730800510439 /* Main.storyboard */,
 				D02A79EF1C5C730800510439 /* LaunchScreen.storyboard */,
-				D02A79E81C5C730800510439 /* TravelLocationsVC.swift */,
 				D02A7A221C6130D500510439 /* VirtualTourist.swift */,
+				D02A7A241C61314B00510439 /* Config.swift */,
+				D052C8FB1C657F29002C9DB5 /* VCs */,
 				D052C8F61C650122002C9DB5 /* CoreDataServices */,
 				D02A7A1D1C6104AC00510439 /* Model */,
 				D052C8F21C64F9B9002C9DB5 /* SharedServices */,
-				D02A7A241C61314B00510439 /* Config.swift */,
 				D02A79ED1C5C730800510439 /* Assets.xcassets */,
 				D02A79F21C5C730800510439 /* Info.plist */,
 			);
@@ -180,6 +182,15 @@
 				D02A7A141C60FEC800510439 /* CoreDataStackManager.swift */,
 			);
 			name = CoreDataServices;
+			sourceTree = "<group>";
+		};
+		D052C8FB1C657F29002C9DB5 /* VCs */ = {
+			isa = PBXGroup;
+			children = (
+				D02A79E81C5C730800510439 /* TravelLocationsVC.swift */,
+				D052C8FC1C66AC4D002C9DB5 /* PhotoAlbumVC.swift */,
+			);
+			name = VCs;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -314,6 +325,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D02A7A231C6130D500510439 /* VirtualTourist.swift in Sources */,
+				D052C8FD1C66AC4D002C9DB5 /* PhotoAlbumVC.swift in Sources */,
 				D02A7A1F1C6120AB00510439 /* ImageCache.swift in Sources */,
 				D02A79E91C5C730800510439 /* TravelLocationsVC.swift in Sources */,
 				D01905D41C62A6D3007B4E2B /* Photo.swift in Sources */,

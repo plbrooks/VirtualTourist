@@ -33,7 +33,7 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
         
         // DO THE FOLLOWING OR NOT?
         
-        fetchedResultsController.delegate = self
+        //fetchedResultsController.delegate = self
         
         getPins()
     }
@@ -46,9 +46,9 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
     }
     
     /********************************************************************************************************
-     * Set up annotation visuals                                                                            *
+     * Call the next view controller when a button is pressed                                               *
      ********************************************************************************************************/
-    func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
+    /*func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
         let reuseId = "pin"
         var pinView = mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId) as? MKPinAnnotationView
         if pinView == nil {
@@ -59,8 +59,12 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
             pinView!.annotation = annotation
         }
         return pinView
-    }
+    }*/
 
+    
+    /********************************************************************************************************
+     * Process the "Edit" button                                                                            *
+     ********************************************************************************************************/
     @IBAction func edit(sender: AnyObject) {
         switch editButton.title! {
         case "Edit":
@@ -94,12 +98,16 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
         }
     }
     
+    /********************************************************************************************************
+     * Process the "Delete" button                                                                          *
+     ********************************************************************************************************/
     @IBAction func deletePins(sender: AnyObject) {
         editButton.title = "Done"
     }
     
-    
-    
+    /********************************************************************************************************
+     * Add a pin after a long touch                                                                         *
+     ********************************************************************************************************/
     @IBAction func handleLongPressGesture(sender: AnyObject) {
         if sender.state == UIGestureRecognizerState.Began {
             let touchLocation = sender.locationInView(mapView)
@@ -123,6 +131,14 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
         }
     }
     
+    func mapView(mapView: MKMapView,
+        didSelectAnnotationView view: MKAnnotationView) {
+        let controller =
+        storyboard!.instantiateViewControllerWithIdentifier("PhotoAlbumVC")
+            as! PhotoAlbumVC
+        //controller.actor = actor
+        self.navigationController!.pushViewController(controller, animated: true)
+    }
     
     func getPins() {
         
