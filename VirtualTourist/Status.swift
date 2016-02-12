@@ -16,6 +16,7 @@ class Status: NSObject {
         case noError
         case accessSavedData        (code: Int, text: String)
         case saveContext            (code: Int, text: String)
+        case flickrError             (code: Int, text: String)
     }
     
     /****************************************************************************************************************
@@ -25,6 +26,7 @@ class Status: NSObject {
         static let noError          =       ""
         static let accessSavedData  =       "Oops - error loading or accessing saved data. Status code = STATUSCODE description = TEXT"
         static let saveContext      =       "Oops - error saving context. Status code = STATUSCODE description = TEXT"
+        static let flickrError      =        "Oops - error acessing Flickr photos. Status code = STATUSCODE description = TEXT"
         
     }
 }

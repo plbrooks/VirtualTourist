@@ -46,23 +46,6 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
     }
     
     /********************************************************************************************************
-     * Call the next view controller when a button is pressed                                               *
-     ********************************************************************************************************/
-    /*func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
-        let reuseId = "pin"
-        var pinView = mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId) as? MKPinAnnotationView
-        if pinView == nil {
-            pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
-            pinView!.canShowCallout = false
-        }
-        else {
-            pinView!.annotation = annotation
-        }
-        return pinView
-    }*/
-
-    
-    /********************************************************************************************************
      * Process the "Edit" button                                                                            *
      ********************************************************************************************************/
     @IBAction func edit(sender: AnyObject) {
@@ -112,10 +95,7 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
         if sender.state == UIGestureRecognizerState.Began {
             let touchLocation = sender.locationInView(mapView)
             let coordinate = mapView.convertPoint(touchLocation, toCoordinateFromView: mapView)
-            //let coor = CLLocationCoordinate2D
-
             let dictionary: [String : AnyObject] = [
-                //Pin.Keys.Location   : NSValue(MKCoordinate: coordinate),
                 Pin.Keys.Latitude   : coordinate.latitude,
                 Pin.Keys.Longitude  : coordinate.longitude
             ]
@@ -128,6 +108,15 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
             annotation.coordinate = coordinate
             annotations.append(annotation)
             mapView.addAnnotations(annotations)
+            
+            
+            // START TO ADD OR FETCH PHOTOS
+            
+            
+
+            
+            
+            
         }
     }
     
@@ -139,8 +128,22 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
         let controller =
         storyboard!.instantiateViewControllerWithIdentifier("PhotoAlbumVC")
             as! PhotoAlbumVC
-        //controller.actor = actor
+            controller.mapCenterPosition = CLLocationCoordinate2D(latitude: (view.annotation?.coordinate.latitude)!, longitude: (view.annotation?.coordinate.longitude)!)
         self.navigationController!.pushViewController(controller, animated: true)
+            
+        // START TO ADD OR FETCH PHOTOS
+            var photoLocations = [""]           // array of document locations
+            SharedMethod.getImagesFromFlickr(Constants.maxNumOfPhotos) {(inner: () throws -> Bool) -> Void in
+                do {
+                    try inner() // if successful continue else catch the error code
+                } catch let error {
+                    SharedMethod.showAlert(error, title: "Error", viewController: self)
+                }
+            }
+            
+            
+            
+            
     }
     
     func getPins() {

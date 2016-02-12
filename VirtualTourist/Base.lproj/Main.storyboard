@@ -138,7 +138,7 @@
                                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                         </collectionViewFlowLayout>
                                         <cells>
-                                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="1tA-fS-tnK">
+                                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Photo" id="1tA-fS-tnK">
                                                 <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -154,7 +154,10 @@
                                         <constraints>
                                             <constraint firstAttribute="height" constant="43" id="z47-Ah-Ofa"/>
                                         </constraints>
-                                        <state key="normal" title="Button"/>
+                                        <state key="normal" title="New Collection"/>
+                                        <connections>
+                                            <action selector="addNewCollection:" destination="8GU-Qz-h1h" eventType="touchUpInside" id="jCf-oW-KiQ"/>
+                                        </connections>
                                     </button>
                                 </subviews>
                                 <constraints>
@@ -181,6 +184,9 @@
                     </view>
                     <navigationItem key="navigationItem" title="Virtual Tourist Photos" id="4bP-BG-hvi"/>
                     <keyCommands/>
+                    <connections>
+                        <outlet property="mapView" destination="MwN-lc-CVT" id="5N8-sd-dSq"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4jV-Wd-5gv" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

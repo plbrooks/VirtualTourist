@@ -10,7 +10,6 @@ import Foundation
 
 class VirtualTourist : NSObject {
     
-    var test = "test"
     
     /*typealias CompletionHander = (result: AnyObject!, error: NSError?) -> Void
     

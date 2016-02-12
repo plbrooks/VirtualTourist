@@ -18,7 +18,6 @@ import UIKit
  
  // 1. Import CoreData
 import CoreData
-import MapKit
 
 // 2. Make Person a subclass of NSManagedObject
 class Pin : NSManagedObject {
