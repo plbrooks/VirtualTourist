@@ -113,10 +113,6 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
             // START TO ADD OR FETCH PHOTOS
             
             
-
-            
-            
-            
         }
     }
     
@@ -125,17 +121,17 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
      ********************************************************************************************************/
     func mapView(mapView: MKMapView,
         didSelectAnnotationView view: MKAnnotationView) {
-        let controller =
-        storyboard!.instantiateViewControllerWithIdentifier("PhotoAlbumVC")
-            as! PhotoAlbumVC
-            controller.mapCenterPosition = CLLocationCoordinate2D(latitude: (view.annotation?.coordinate.latitude)!, longitude: (view.annotation?.coordinate.longitude)!)
-        self.navigationController!.pushViewController(controller, animated: true)
-            
         // START TO ADD OR FETCH PHOTOS
             var photoLocations = [""]           // array of document locations
             SharedMethod.getImagesFromFlickr(Constants.maxNumOfPhotos) {(inner: () throws -> Bool) -> Void in
                 do {
                     try inner() // if successful continue else catch the error code
+                    print("photodict in VC = \(SharedNetworkServices.sharedInstance.photoURLDict)")
+                    let controller =
+                    self.storyboard!.instantiateViewControllerWithIdentifier("PhotoAlbumVC")
+                        as! PhotoAlbumVC
+                    controller.mapCenterPosition = CLLocationCoordinate2D(latitude: (view.annotation?.coordinate.latitude)!, longitude: (view.annotation?.coordinate.longitude)!)
+                    self.navigationController!.pushViewController(controller, animated: true)
                 } catch let error {
                     SharedMethod.showAlert(error, title: "Error", viewController: self)
                 }
@@ -202,7 +198,7 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
     // Step 1 - Add the lazy fetchedResultsController property. See the reference sheet in the lesson if you
     // want additional help creating this property.
     
-    lazy var fetchedResultsController: NSFetchedResultsController = {
+    /*lazy var fetchedResultsController: NSFetchedResultsController = {
         
         let fetchRequest = NSFetchRequest(entityName: "Pin")
         
@@ -215,7 +211,7 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
         
         return fetchedResultsController
         
-    }()
+    }()*/
     
 
 

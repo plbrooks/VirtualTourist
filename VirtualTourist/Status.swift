@@ -16,7 +16,7 @@ class Status: NSObject {
         case noError
         case accessSavedData        (code: Int, text: String)
         case saveContext            (code: Int, text: String)
-        case flickrError             (code: Int, text: String)
+        case flickrError            (code: Int, text: String)
     }
     
     /****************************************************************************************************************
