@@ -1,4 +1,6 @@
 import UIKit
+import CoreData
+import Foundation
 
 /**
  * Person.swift
@@ -17,7 +19,6 @@ import UIKit
  */
  
  // 1. Import CoreData
-import CoreData
 
 // 2. Make Person a subclass of NSManagedObject
 class Pin : NSManagedObject {
@@ -26,14 +27,15 @@ class Pin : NSManagedObject {
         static let Latitude = "latitude"
         static let Longitude = "longitude"
         //static let Location = "location"
-        static let Photos = "photos"
+        //static let Photos = "photos"
     }
     
     // 3. We are promoting these four from simple properties, to Core Data attributes
     @NSManaged var latitude: NSNumber
     @NSManaged var longitude: NSNumber
     //@NSManaged var location: CLLocationCoordinate2D
-    @NSManaged var photos: [Photo]
+    //@NSManaged var photos: [Photo]
+    @NSManaged var photos: NSSet
     
     // 4. Include this standard Core Data init method.
     override init(entity: NSEntityDescription, insertIntoManagedObjectContext context: NSManagedObjectContext?) {
@@ -62,8 +64,20 @@ class Pin : NSManagedObject {
         
         // After the Core Data work has been taken care of we can init the properties from the
         // dictionary. This works in the same way that it did before we started on Core Data
-        latitude = dictionary[Keys.Latitude] as! Double
-        longitude = dictionary[Keys.Longitude] as! Double
+        
+        latitude = dictionary[Keys.Latitude] as! NSNumber
+        longitude = dictionary[Keys.Longitude] as! NSNumber
+        
+        print("in Pin object lat, lon = \(latitude), \(longitude)")
+        
+        //var incoming = dictionary[Keys.Latitude] as! Double
+        //latitude = round(10000000000*incoming)/10000000000   // round to 10 or less decimal places
+        //print("Var and latitude = \(incoming), \(latitude)")
+        
+        //incoming = dictionary[Keys.Longitude] as! Double
+        //longitude = round(10000000000*incoming)/10000000000       // round to 10 or less decimal places
+         //print("Var and longitude = \(incoming), \(longitude)")
+        
         //location = dictionary[Keys.Location] as! NSValue
     }
     

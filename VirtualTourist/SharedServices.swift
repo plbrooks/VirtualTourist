@@ -72,7 +72,9 @@ class SharedServices: NSObject {
             message: message, preferredStyle: .Alert)
         let OKAction = UIAlertAction(title: "OK", style: .Default, handler: nil)
         alertView.addAction(OKAction)
-        viewController.presentViewController(alertView, animated: true, completion: nil)
+        dispatch_async(dispatch_get_main_queue(), {
+            viewController.presentViewController(alertView, animated: true, completion: nil)
+        })
     }
 
 

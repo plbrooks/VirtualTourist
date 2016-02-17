@@ -24,7 +24,7 @@ class Constants: NSObject {
     
     struct FlickrAPI {
         static let BASE_URL = "https://api.flickr.com/services/rest/"
-        static let METHOD_NAME = "flickr.photos.search"
+        static let METHOD_NAME = "flickr.photos.searchA"
         static let API_KEY = "91fa377fa025f51690767e7a17734e7d"
         static let EXTRAS = "url_m"
         static let SAFE_SEARCH = "1"
@@ -37,8 +37,18 @@ class Constants: NSObject {
         static let LAT_MAX = 90.0
         static let LON_MIN = -180.0
         static let LON_MAX = 180.0
-        
-
+        static let methodArguments: [String: String!] = [
+            "method": METHOD_NAME,
+            "api_key": API_KEY,
+            "safe_search": SAFE_SEARCH,
+            "extras": EXTRAS,
+            "format": DATA_FORMAT,
+            "nojsoncallback": NO_JSON_CALLBACK
+        ]
     }
+ 
+    
+    
+    
     
 }

@@ -24,10 +24,13 @@ class Photo : NSManagedObject {
     
     struct Keys {
         static let Imagepath = "imagepath"
+        static let Pin = "pin"
     }
     
     // 3. We are promoting these four from simple properties, to Core Data attributes
-     @NSManaged var imagePath: String
+     @NSManaged var imagepath: String
+     //@NSManaged var pin: Pin?
+     @NSManaged var pin: NSManagedObject
     
     // 4. Include this standard Core Data init method.
     override init(entity: NSEntityDescription, insertIntoManagedObjectContext context: NSManagedObjectContext?) {
@@ -56,15 +59,27 @@ class Photo : NSManagedObject {
         
         // After the Core Data work has been taken care of we can init the properties from the
         // dictionary. This works in the same way that it did before we started on Core Data
+    
+        imagepath = dictionary[Keys.Imagepath] as! String
+        pin = dictionary[Keys.Pin] as! Pin
     }
-    /*var image: UIImage? {
-    get {
-        return VirtualTourist.Caches.imageCache.imageWithIdentifier(imagePath)
+    func save(imageAtURL: NSURL, named: String) {
+        let documentsURL = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first!
+        /*if let image = UIImage(data: imageData) {
+            let fileURL = documentsURL.URLByAppendingPathComponent(named+".png")
+            if let pngImageData = UIImagePNGRepresentation(image) {
+                pngImageData.writeToURL(fileURL, atomically: false)
+            }
+        }*/
     }
     
-    set {
-        TheMovieDB.Caches.imageCache.storeImage(image, withIdentifier: imagePath!)
+    // MARK: - Helper
+    
+    func pathForIdentifier(identifier: String) -> String {
+        let documentsDirectoryURL: NSURL = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first!
+        let fullURL = documentsDirectoryURL.URLByAppendingPathComponent(identifier)
+        
+        return fullURL.path!
     }
-    }*/
 
 }

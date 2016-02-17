@@ -96,23 +96,29 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
             let touchLocation = sender.locationInView(mapView)
             let coordinate = mapView.convertPoint(touchLocation, toCoordinateFromView: mapView)
             let dictionary: [String : AnyObject] = [
-                Pin.Keys.Latitude   : coordinate.latitude,
-                Pin.Keys.Longitude  : coordinate.longitude
+                Pin.Keys.Latitude   : coordinate.latitude as NSNumber,
+                Pin.Keys.Longitude  : coordinate.longitude as NSNumber
             ]
-            let _ = Pin(dictionary: dictionary, context: sharedContext)
-            print("Creating pin at location \(coordinate)")
-            CoreDataStackManager.sharedInstance.saveContext()
             
+            print ("pin lat,long to store = \(dictionary["latitude"]), \(dictionary["longitude"])")
+            
+            let _ = Pin(dictionary: dictionary, context: sharedContext)
+            CoreDataStackManager.sharedInstance.saveContext()
             var annotations = [MKPointAnnotation]()
             let annotation = MKPointAnnotation()
             annotation.coordinate = coordinate
             annotations.append(annotation)
             mapView.addAnnotations(annotations)
             
+            // START TO ADD PHOTOS- LATER
             
-            // START TO ADD OR FETCH PHOTOS
-            
-            
+            /*SharedMethod.getImagesFromFlickr(Constants.maxNumOfPhotos) {(inner: () throws -> Bool) -> Void in
+                do {
+                    try inner() // if successful continue else catch the error code
+                } catch let error {
+                    SharedMethod.showAlert(error, title: "Error", viewController: self)
+                }
+            }*/
         }
     }
     
@@ -121,12 +127,26 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
      ********************************************************************************************************/
     func mapView(mapView: MKMapView,
         didSelectAnnotationView view: MKAnnotationView) {
-        // START TO ADD OR FETCH PHOTOS
-            var photoLocations = [""]           // array of document locations
-            SharedMethod.getImagesFromFlickr(Constants.maxNumOfPhotos) {(inner: () throws -> Bool) -> Void in
+        
+            //let request = NSFetchRequest(entityName: "Pin")
+            //let firstPredicate = NSPredicate(format: "latitude == %@", view.annotation!.coordinate.latitude)
+            //let secondPredicate = NSPredicate(format: "longitude == %@", view.annotation!.coordinate.longitude)
+            //let predicate = NSCompoundPredicate(type: NSCompoundPredicateType.OrPredicateType, subpredicates: [firstPredicate, secondPredicate])
+            //request.predicate = predicate
+            /*(request.sortDescriptors = [NSSortDescriptor(key: "latitude", ascending: true)]
+            let context = self.sharedContext
+            do {
+                let pin = try context.executeFetchRequest(request) as! [Pin]
+                print("pin = \(pin)")
+            } catch let error as NSError {
+                // failure
+                print("Fetch failed: \(error.localizedDescription)")
+            }*/
+            
+            // START TO FETCH PHOTOS - IN PROCESS
+            SharedMethod.getImagesFromFlickr(Constants.maxNumOfPhotos, coordinate: (view.annotation?.coordinate)!) {(inner: () throws -> Bool) -> Void in
                 do {
                     try inner() // if successful continue else catch the error code
-                    print("photodict in VC = \(SharedNetworkServices.sharedInstance.photoURLDict)")
                     let controller =
                     self.storyboard!.instantiateViewControllerWithIdentifier("PhotoAlbumVC")
                         as! PhotoAlbumVC
@@ -136,14 +156,9 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
                     SharedMethod.showAlert(error, title: "Error", viewController: self)
                 }
             }
-            
-            
-            
-            
     }
     
     func getPins() {
-        
         let request = NSFetchRequest(entityName: "Pin")
         request.sortDescriptors = [NSSortDescriptor(key: "latitude", ascending: true)]
         let context = self.sharedContext
@@ -156,6 +171,7 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
                     let annotation = MKPointAnnotation()
                     let coordinate  = CLLocationCoordinate2D(latitude: pin.latitude as Double, longitude: pin.longitude as Double)
                     annotation.coordinate = coordinate
+                    //print("pin in VC lat and long = \(pin.latitude), \(pin.longitude)")
                     annotations.append(annotation)
                 }
                 mapView.addAnnotations(annotations)
@@ -198,7 +214,7 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
     // Step 1 - Add the lazy fetchedResultsController property. See the reference sheet in the lesson if you
     // want additional help creating this property.
     
-    /*lazy var fetchedResultsController: NSFetchedResultsController = {
+    /*lazy var pinFetchedResultsController: NSFetchedResultsController = {
         
         let fetchRequest = NSFetchRequest(entityName: "Pin")
         
@@ -211,9 +227,23 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
         
         return fetchedResultsController
         
+    }()
+    
+    lazy var photoFetchedResultsController: NSFetchedResultsController = {
+        
+        let fetchRequest = NSFetchRequest(entityName: "Photo")
+        
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "imagepath", ascending: true)]
+        
+        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
+            managedObjectContext: self.sharedContext,
+            sectionNameKeyPath: nil,
+            cacheName: nil)
+        
+        return fetchedResultsController
+        
     }()*/
     
-
 
 
 }

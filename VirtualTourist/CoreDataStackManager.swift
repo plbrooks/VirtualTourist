@@ -38,6 +38,7 @@ class CoreDataStackManager: NSObject {
     lazy var managedObjectModel: NSManagedObjectModel = {
         print("Instantiating the managedObjectModel property")
         let modelURL = NSBundle.mainBundle().URLForResource(Constants.modelURL.name, withExtension: Constants.modelURL.ext)!
+        //let modelURL = NSURL(string:"file:///Users/Peter/Desktop/Model.momd")!
         return NSManagedObjectModel(contentsOfURL: modelURL)!
     }()
     
@@ -56,9 +57,9 @@ class CoreDataStackManager: NSObject {
         print("Instantiating the persistentStoreCoordinator property")
         
         let coordinator: NSPersistentStoreCoordinator? = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
-        let url = self.applicationDocumentsDirectory.URLByAppendingPathComponent(SQLITE_FILE_NAME)
+        //let url = self.applicationDocumentsDirectory.URLByAppendingPathComponent(SQLITE_FILE_NAME)
+        let url = NSURL(string: "file:///Users/Peter/Desktop/VirtualTourist.sqlite")!
         print("sqlite path: \(url.path!)")
-        
         do {
             try coordinator!.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: url, options: nil)
         } catch let error as NSError {
