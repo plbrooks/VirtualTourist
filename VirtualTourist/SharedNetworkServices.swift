@@ -11,24 +11,33 @@ import UIKit
 import MapKit
 import CoreData
 
-
-
 class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
     static let sharedInstance = SharedNetworkServices()    // set up shared instance class
-    private override init() {}                      // ensure noone will init
+    private override init() {}                              // ensure noone will init
     
+    var randomPageNumber = 0
     
     func test(maxNumOfPhotos:Int, coordinate: CLLocationCoordinate2D, completionHandler: (inner: () throws -> Bool) -> Void) {
 
-        getImagesFromFlickr(Constants.maxNumOfPhotos, coordinate: coordinate) {(inner: () throws -> Bool) -> Void in
+        getPageFromFlickr(Constants.maxNumOfPhotos, coordinate: coordinate) {(inner2: () throws -> Bool) -> Void in
             do {
-                try inner() // if successful continue else catch the error code
+                try inner2() // if successful continue else catch the error code
             } catch let error {
                 completionHandler(inner: {throw error})
             }
         }
+        
+        getURLsFromFlickrPage(randomPageNumber, coordinate: coordinate) {(inner2: () throws -> Bool) -> Void in
+            do {
+                try inner2() // if successful continue else catch the error code
+            } catch let error {
+                completionHandler(inner: {throw error})
+            }
+        }
+
+
         completionHandler(inner: {true})
-    }
+}
 
     func checkForFlickrErrors(data: NSData?, response: NSURLResponse?, error: NSError?) throws -> Void {
         guard (error == nil)  else {    // was there an error returned?
@@ -83,7 +92,7 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
 
     /* Function makes first request to get a random page, then it makes a request to get an image with the random page */
     
-    func getImagesFromFlickr(maxNumOfPhotos:Int, coordinate: CLLocationCoordinate2D, completionHandler: (inner: () throws -> Bool) -> Void) {
+        func getPageFromFlickr(maxNumOfPhotos:Int, coordinate: CLLocationCoordinate2D, completionHandler: (inner: () throws -> Bool) -> Void) {
         
         var methodArguments = Constants.FlickrAPI.methodArguments
         methodArguments["bbox"] = createBoundingBoxString(coordinate.latitude, longitude: coordinate.longitude)
@@ -104,8 +113,8 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
                     let totalPages = (photosDictionary!["pages"] as? Int)!
                     
                     let pageLimit = min(totalPages, 200)        // Pick a random page
-                    let randomPage = Int(arc4random_uniform(UInt32(pageLimit))) + 1
-                    self.getURLsFromFlickrPage(methodArguments, pageNumber: randomPage, coordinate: coordinate)
+                    self.randomPageNumber = Int(arc4random_uniform(UInt32(pageLimit))) + 1
+                    //self.getURLsFromFlickrPage(methodArguments, pageNumber: randomPage, coordinate: coordinate)
                     dispatch_async(dispatch_get_main_queue(), {
                         completionHandler(inner: {true})
                     })
@@ -120,18 +129,21 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
         task.resume()
     }
     
-    func getURLsFromFlickrPage(methodArguments: [String : AnyObject], pageNumber: Int, coordinate: CLLocationCoordinate2D) {
+    func getURLsFromFlickrPage(pageNumber: Int, coordinate: CLLocationCoordinate2D, completionHandler: (inner: () throws -> Bool) -> Void) {
         
-        var withPageDictionary = methodArguments    // start with prior arguments
-        withPageDictionary["page"] = pageNumber     // add in a specific page #
-        withPageDictionary["per_page"] = Constants.FlickrAPI.PER_PAGE   // get a lot of photos per page
+        var methodArguments = Constants.FlickrAPI.methodArguments    // start with prior arguments
+        methodArguments["bbox"] = createBoundingBoxString(coordinate.latitude, longitude: coordinate.longitude)
+        methodArguments["page"] = pageNumber     // add in a specific page #
+        methodArguments["per_page"] = Constants.FlickrAPI.PER_PAGE   // get a lot of photos per page
         
         let session = NSURLSession.sharedSession()
-        let urlString = Constants.FlickrAPI.BASE_URL + escapedParameters(withPageDictionary)
+        let urlString = Constants.FlickrAPI.BASE_URL + escapedParameters(methodArguments)
         let url = NSURL(string: urlString)
         let request = NSURLRequest(URL: url!)
         let task = session.dataTaskWithRequest(request) { (data, response, error) in
             
+            
+            /*
             /* GUARD: Was there an error? */
             guard (error == nil) else {
                 print("There was an error with your request: \(error)")
@@ -200,55 +212,70 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
                 print("No photos found")
                 return
             }
-            //print("photo directory = \(photosDictionary)")
+            //print("photo directory = \(photosDictionary)")*/
             
             // Use SERVER and ID to get unique name
-            
-            let URLCount = min(Constants.maxNumOfPhotos,photosDictionary.count)
-            print("URL count = \(URLCount)")
-            
-            // get pin
-            let request = NSFetchRequest(entityName: "Pin")
-            let testLat = coordinate.latitude as NSNumber
-            let testLong = coordinate.longitude as NSNumber
-            let firstPredicate = NSPredicate(format: "latitude == %@", testLat)
-            let secondPredicate = NSPredicate(format: "longitude == %@", testLong)
-            let predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [firstPredicate, secondPredicate])
-            request.predicate = predicate
-            request.sortDescriptors = [NSSortDescriptor(key: "latitude", ascending: true)]
-            let context = self.sharedContext
-            
             do {
-                let pins = try context.executeFetchRequest(request) as! [Pin]
-                if (pins.count == 1) {
-                    for pin: Pin in pins {
-                        print("pin retrieved from Network Services lat and long = \(pin.latitude), \(pin.longitude)")
-                        for var i = 1; i <= URLCount; ++i {
-                            let randomPhotoIndex = Int(arc4random_uniform(UInt32(photosDictionary.count)))
-                            let randomPhoto = photosDictionary[randomPhotoIndex] as [String: AnyObject]
-                            
-                            /* GUARD: Does our photo have a key for 'url_m'? */
-                            guard let imageURLString = randomPhoto["url_m"] as? String else {
-                                print("Cannot find key 'url_m' in \(randomPhoto)")
-                                return
+                try self.checkForFlickrErrors(data, response: response, error: error)   // Any Flickr errors?
+                /* if here no errors */
+                
+                let parsedResult: AnyObject!    //  Parse the data!
+                do {
+                    parsedResult = try NSJSONSerialization.JSONObjectWithData(data!, options: .AllowFragments)
+                    let photosContainer = parsedResult["photos"] as? NSDictionary
+                    let photosDictionary = photosContainer!["photo"] as? [[String: AnyObject]]
+                    let URLCount = min(Constants.maxNumOfPhotos,photosDictionary!.count)
+                    print("URL count = \(URLCount)")
+                    
+                    // get pin
+                    let request = NSFetchRequest(entityName: "Pin")
+                    let testLat = coordinate.latitude as NSNumber
+                    let testLong = coordinate.longitude as NSNumber
+                    let firstPredicate = NSPredicate(format: "latitude == %@", testLat)
+                    let secondPredicate = NSPredicate(format: "longitude == %@", testLong)
+                    let predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [firstPredicate, secondPredicate])
+                    request.predicate = predicate
+                    request.sortDescriptors = [NSSortDescriptor(key: "latitude", ascending: true)]
+                    let context = self.sharedContext
+                    do {
+                        let pins = try context.executeFetchRequest(request) as! [Pin]
+                        if (pins.count == 1) {
+                            for pin: Pin in pins {
+                                print("pin retrieved from Network Services lat and long = \(pin.latitude), \(pin.longitude)")
+                                for var i = 1; i <= URLCount; ++i {
+                                    let randomPhotoIndex = Int(arc4random_uniform(UInt32(photosDictionary!.count)))
+                                    let randomPhoto = photosDictionary![randomPhotoIndex]
+                                    
+                                    /* GUARD: Does our photo have a key for 'url_m'? */
+                                    guard let imageURLString = randomPhoto["url_m"] as? String else {
+                                        print("Cannot find key 'url_m' in \(randomPhoto)")
+                                        return
+                                    }
+                                    let dictionary: [String : AnyObject] = [
+                                        Photo.Keys.Imagepath   : imageURLString,
+                                        Photo.Keys.Pin : pin
+                                    ]
+                                    let _ = Photo(dictionary: dictionary, context: self.sharedContext)
+                                    print("photo imagepath and pin added - \(imageURLString), pin = \(pin.latitude), \(pin.longitude)")
+                                }
+                                CoreDataStackManager.sharedInstance.saveContext()
                             }
-                            let dictionary: [String : AnyObject] = [
-                                Photo.Keys.Imagepath   : imageURLString,
-                                Photo.Keys.Pin : pin
-                            ]
-                            let _ = Photo(dictionary: dictionary, context: self.sharedContext)
-                            print("photo imagepath and pin added - \(imageURLString), pin = \(pin.latitude), \(pin.longitude)")
+                        } else {
+                            print("No Users")
                         }
-                        CoreDataStackManager.sharedInstance.saveContext()
+                    } catch let error as NSError {
+                        // failure
+                        print("Fetch failed: \(error.localizedDescription)")
                     }
-                } else {
-                    print("No Users")
+                    
+                } catch {
+                    completionHandler(inner: {true})
                 }
-            } catch let error as NSError {
-                // failure
-                print("Fetch failed: \(error.localizedDescription)")
+                
+            } catch let error {
+                completionHandler(inner: {throw error})
             }
-            return
+        return
         }
         task.resume()
     }
