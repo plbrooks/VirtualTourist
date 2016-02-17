@@ -20,19 +20,15 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
     
     func test(maxNumOfPhotos:Int, coordinate: CLLocationCoordinate2D, completionHandler: (inner: () throws -> Bool) -> Void) {
 
-        getImagesFromFlickr(maxNumOfPhotos, coordinate: coordinate) {(inner: () throws -> Bool) -> Void in
+        getImagesFromFlickr(Constants.maxNumOfPhotos, coordinate: coordinate) {(inner: () throws -> Bool) -> Void in
             do {
                 try inner() // if successful continue else catch the error code
             } catch let error {
-                dispatch_async(dispatch_get_main_queue(), {
-                    completionHandler(inner: {throw error})
-                })
+                completionHandler(inner: {throw error})
             }
         }
-        
-        
-        
-}
+        completionHandler(inner: {true})
+    }
 
     func checkForFlickrErrors(data: NSData?, response: NSURLResponse?, error: NSError?) throws -> Void {
         guard (error == nil)  else {    // was there an error returned?
@@ -76,7 +72,7 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
             throw Status.codeIs.noError
         }
         
-        if photosDictionary["pages"] != nil { // Is "pages" key in the photosDictionary?
+        if photosDictionary["pages"] == nil { // Is "pages" key in the photosDictionary?
             print("Cannot find key 'pages' in \(photosDictionary)")
             throw Status.codeIs.noError
         }
@@ -86,6 +82,7 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
 
 
     /* Function makes first request to get a random page, then it makes a request to get an image with the random page */
+    
     func getImagesFromFlickr(maxNumOfPhotos:Int, coordinate: CLLocationCoordinate2D, completionHandler: (inner: () throws -> Bool) -> Void) {
         
         var methodArguments = Constants.FlickrAPI.methodArguments

@@ -2,4 +2,438 @@
 <Bucket
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "VirtualTourist/TravelLocationsVC.swift"
+            timestampString = "477422193.845819"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "150"
+            endingLineNumber = "150"
+            landmarkName = "mapView(_:didSelectAnnotationView:)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "VirtualTourist/TravelLocationsVC.swift"
+            timestampString = "477422196.646934"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "156"
+            endingLineNumber = "156"
+            landmarkName = "mapView(_:didSelectAnnotationView:)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "VirtualTourist/SharedNetworkServices.swift"
+            timestampString = "477422216.289579"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "30"
+            endingLineNumber = "30"
+            landmarkName = "test(_:coordinate:completionHandler:)"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "VirtualTourist.SharedNetworkServices.test (VirtualTourist.SharedNetworkServices)(Swift.Int, coordinate : __C.CLLocationCoordinate2D, completionHandler : (inner : () throws -&gt; Swift.Bool) -&gt; ()) -&gt; ()"
+                  moduleName = "VirtualTourist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Peter/Developer/VirtualTourist/VirtualTourist/SharedNetworkServices.swift"
+                  timestampString = "477422576.815149"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "30"
+                  endingLineNumber = "30"
+                  offsetFromSymbolStart = "193">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "VirtualTourist.SharedNetworkServices.(test (VirtualTourist.SharedNetworkServices) -&gt; (Swift.Int, coordinate : __C.CLLocationCoordinate2D, completionHandler : (inner : () throws -&gt; Swift.Bool) -&gt; ()) -&gt; ()).(closure #2)"
+                  moduleName = "VirtualTourist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Peter/Developer/VirtualTourist/VirtualTourist/SharedNetworkServices.swift"
+                  timestampString = "477422576.81537"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "30"
+                  endingLineNumber = "30"
+                  offsetFromSymbolStart = "8">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "VirtualTourist/SharedNetworkServices.swift"
+            timestampString = "477422219.450855"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "27"
+            endingLineNumber = "27"
+            landmarkName = "test(_:coordinate:completionHandler:)"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "VirtualTourist.SharedNetworkServices.(test (VirtualTourist.SharedNetworkServices) -&gt; (Swift.Int, coordinate : __C.CLLocationCoordinate2D, completionHandler : (inner : () throws -&gt; Swift.Bool) -&gt; ()) -&gt; ()).(closure #1)"
+                  moduleName = "VirtualTourist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Peter/Developer/VirtualTourist/VirtualTourist/SharedNetworkServices.swift"
+                  timestampString = "477422576.816613"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "27"
+                  endingLineNumber = "27"
+                  offsetFromSymbolStart = "122">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "VirtualTourist.SharedNetworkServices.(test (VirtualTourist.SharedNetworkServices) -&gt; (Swift.Int, coordinate : __C.CLLocationCoordinate2D, completionHandler : (inner : () throws -&gt; Swift.Bool) -&gt; ()) -&gt; ()).(closure #1).(closure #1)"
+                  moduleName = "VirtualTourist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Peter/Developer/VirtualTourist/VirtualTourist/SharedNetworkServices.swift"
+                  timestampString = "477422576.816807"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "27"
+                  endingLineNumber = "27"
+                  offsetFromSymbolStart = "12">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "VirtualTourist/SharedNetworkServices.swift"
+            timestampString = "477422221.352129"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "25"
+            endingLineNumber = "25"
+            landmarkName = "test(_:coordinate:completionHandler:)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "VirtualTourist/TravelLocationsVC.swift"
+            timestampString = "477422305.525126"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "147"
+            endingLineNumber = "147"
+            landmarkName = "mapView(_:didSelectAnnotationView:)"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "VirtualTourist.TravelLocationsVC.mapView (VirtualTourist.TravelLocationsVC)(__ObjC.MKMapView, didSelectAnnotationView : __ObjC.MKAnnotationView) -&gt; ()"
+                  moduleName = "VirtualTourist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Peter/Developer/VirtualTourist/VirtualTourist/TravelLocationsVC.swift"
+                  timestampString = "477422576.819197"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "147"
+                  endingLineNumber = "147"
+                  offsetFromSymbolStart = "23">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "VirtualTourist.TravelLocationsVC.(mapView (VirtualTourist.TravelLocationsVC) -&gt; (__ObjC.MKMapView, didSelectAnnotationView : __ObjC.MKAnnotationView) -&gt; ()).(closure #1)"
+                  moduleName = "VirtualTourist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Peter/Developer/VirtualTourist/VirtualTourist/TravelLocationsVC.swift"
+                  timestampString = "477422576.819397"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "149"
+                  endingLineNumber = "149"
+                  offsetFromSymbolStart = "35">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "VirtualTourist/TravelLocationsVC.swift"
+            timestampString = "477422308.742306"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "148"
+            endingLineNumber = "148"
+            landmarkName = "mapView(_:didSelectAnnotationView:)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "VirtualTourist/SharedNetworkServices.swift"
+            timestampString = "477422363.664817"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "23"
+            endingLineNumber = "23"
+            landmarkName = "test(_:coordinate:completionHandler:)"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "VirtualTourist.SharedNetworkServices.test (VirtualTourist.SharedNetworkServices)(Swift.Int, coordinate : __C.CLLocationCoordinate2D, completionHandler : (inner : () throws -&gt; Swift.Bool) -&gt; ()) -&gt; ()"
+                  moduleName = "VirtualTourist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Peter/Developer/VirtualTourist/VirtualTourist/SharedNetworkServices.swift"
+                  timestampString = "477422576.82176"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "23"
+                  endingLineNumber = "23"
+                  offsetFromSymbolStart = "41">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "VirtualTourist.SharedNetworkServices.(test (VirtualTourist.SharedNetworkServices) -&gt; (Swift.Int, coordinate : __C.CLLocationCoordinate2D, completionHandler : (inner : () throws -&gt; Swift.Bool) -&gt; ()) -&gt; ()).(closure #1)"
+                  moduleName = "VirtualTourist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Peter/Developer/VirtualTourist/VirtualTourist/SharedNetworkServices.swift"
+                  timestampString = "477422576.821903"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "25"
+                  endingLineNumber = "25"
+                  offsetFromSymbolStart = "28">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "VirtualTourist/SharedNetworkServices.swift"
+            timestampString = "477422368.524821"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "24"
+            endingLineNumber = "24"
+            landmarkName = "test(_:coordinate:completionHandler:)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "VirtualTourist/SharedNetworkServices.swift"
+            timestampString = "477422505.505275"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "80"
+            endingLineNumber = "80"
+            landmarkName = "checkForFlickrErrors(_:response:error:)"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "VirtualTourist.SharedNetworkServices.checkForFlickrErrors (VirtualTourist.SharedNetworkServices)(Swift.Optional&lt;__ObjC.NSData&gt;, response : Swift.Optional&lt;__ObjC.NSURLResponse&gt;, error : Swift.Optional&lt;__ObjC.NSError&gt;) throws -&gt; ()"
+                  moduleName = "VirtualTourist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Peter/Developer/VirtualTourist/VirtualTourist/SharedNetworkServices.swift"
+                  timestampString = "477422576.823541"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "80"
+                  endingLineNumber = "80"
+                  offsetFromSymbolStart = "3239">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "VirtualTourist.SharedNetworkServices.checkForFlickrErrors (VirtualTourist.SharedNetworkServices)(Swift.Optional&lt;__ObjC.NSData&gt;, response : Swift.Optional&lt;__ObjC.NSURLResponse&gt;, error : Swift.Optional&lt;__ObjC.NSError&gt;) throws -&gt; ()"
+                  moduleName = "VirtualTourist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Peter/Developer/VirtualTourist/VirtualTourist/SharedNetworkServices.swift"
+                  timestampString = "477422576.823734"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "80"
+                  endingLineNumber = "80"
+                  offsetFromSymbolStart = "3258">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "VirtualTourist/SharedNetworkServices.swift"
+            timestampString = "477422511.74897"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "117"
+            endingLineNumber = "117"
+            landmarkName = "getImagesFromFlickr(_:coordinate:completionHandler:)"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "function signature specialization &lt;Arg[4] = Dead, Arg[5] = Value Promoted from InOut&gt; of VirtualTourist.SharedNetworkServices.(getImagesFromFlickr (VirtualTourist.SharedNetworkServices) -&gt; (Swift.Int, coordinate : __C.CLLocationCoordinate2D, completionHandler : (inner : () throws -&gt; Swift.Bool) -&gt; ()) -&gt; ()).(closure #1)"
+                  moduleName = "VirtualTourist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Peter/Developer/VirtualTourist/VirtualTourist/SharedNetworkServices.swift"
+                  timestampString = "477422576.824775"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "117"
+                  endingLineNumber = "117"
+                  offsetFromSymbolStart = "2722">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "VirtualTourist.SharedNetworkServices.(getImagesFromFlickr (VirtualTourist.SharedNetworkServices) -&gt; (Swift.Int, coordinate : __C.CLLocationCoordinate2D, completionHandler : (inner : () throws -&gt; Swift.Bool) -&gt; ()) -&gt; ()).(closure #1).(closure #2)"
+                  moduleName = "VirtualTourist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Peter/Developer/VirtualTourist/VirtualTourist/SharedNetworkServices.swift"
+                  timestampString = "477422576.82491"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "117"
+                  endingLineNumber = "117"
+                  offsetFromSymbolStart = "12">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "VirtualTourist/SharedNetworkServices.swift"
+            timestampString = "477422515.180325"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "110"
+            endingLineNumber = "110"
+            landmarkName = "getImagesFromFlickr(_:coordinate:completionHandler:)"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "VirtualTourist.SharedNetworkServices.(getImagesFromFlickr (VirtualTourist.SharedNetworkServices) -&gt; (Swift.Int, coordinate : __C.CLLocationCoordinate2D, completionHandler : (inner : () throws -&gt; Swift.Bool) -&gt; ()) -&gt; ()).(closure #1).(closure #1)"
+                  moduleName = "VirtualTourist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Peter/Developer/VirtualTourist/VirtualTourist/SharedNetworkServices.swift"
+                  timestampString = "477422576.82581"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "110"
+                  endingLineNumber = "110"
+                  offsetFromSymbolStart = "12">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "VirtualTourist.SharedNetworkServices.(getImagesFromFlickr (VirtualTourist.SharedNetworkServices) -&gt; (Swift.Int, coordinate : __C.CLLocationCoordinate2D, completionHandler : (inner : () throws -&gt; Swift.Bool) -&gt; ()) -&gt; ()).(closure #1).(closure #1).(closure #1)"
+                  moduleName = "VirtualTourist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Peter/Developer/VirtualTourist/VirtualTourist/SharedNetworkServices.swift"
+                  timestampString = "477422576.825939"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "110"
+                  endingLineNumber = "110"
+                  offsetFromSymbolStart = "8">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "VirtualTourist/SharedNetworkServices.swift"
+            timestampString = "477422569.596777"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "86"
+            endingLineNumber = "86"
+            landmarkName = "getImagesFromFlickr(_:coordinate:completionHandler:)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>
