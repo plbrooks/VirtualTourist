@@ -27,6 +27,9 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
             }
         }
         
+        imageDirectory()
+        
+        
         getURLsFromFlickrPage(randomPageNumber, coordinate: coordinate) {(inner2: () throws -> Bool) -> Void in
             do {
                 try inner2() // if successful continue else catch the error code
@@ -241,6 +244,8 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
                         let pins = try context.executeFetchRequest(request) as! [Pin]
                         if (pins.count == 1) {
                             for pin: Pin in pins {
+                                
+                                
                                 print("pin retrieved from Network Services lat and long = \(pin.latitude), \(pin.longitude)")
                                 for var i = 1; i <= URLCount; ++i {
                                     let randomPhotoIndex = Int(arc4random_uniform(UInt32(photosDictionary!.count)))
@@ -259,6 +264,8 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
                                     print("photo imagepath and pin added - \(imageURLString), pin = \(pin.latitude), \(pin.longitude)")
                                 }
                                 CoreDataStackManager.sharedInstance.saveContext()
+                            
+                            
                             }
                         } else {
                             print("No Users")
@@ -307,4 +314,9 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
         return CoreDataStackManager.sharedInstance.managedObjectContext
     }
 
+    func imageDirectoryName(usingKey: String) -> NSURL {
+    return SharedMethod.applicationDocumentsDirectory.URLByAppendingPathComponent(usingKey)
+    }
+    
+    
 }

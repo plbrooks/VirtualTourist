@@ -27,8 +27,10 @@ class CoreDataStackManager: NSObject {
      ****************************************************************************************************************/
     lazy var applicationDocumentsDirectory: NSURL = {
         print("Instantiating the applicationDocumentsDirectory property")
-        let urls = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)
-        return urls[urls.count-1]
+        //let urls = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)
+        let urls = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first!
+        //return urls[urls.count-1]
+        return urls
     }()
     
     /****************************************************************************************************************
