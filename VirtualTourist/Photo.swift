@@ -27,6 +27,8 @@ class Photo : NSManagedObject {
         static let Pin = "pin"
     }
     
+   var photoPath = ""
+    
     // 3. We are promoting these four from simple properties, to Core Data attributes
      @NSManaged var imagepath: String
      //@NSManaged var pin: Pin?
@@ -44,6 +46,30 @@ class Photo : NSManagedObject {
      *  - insert the new Person into a Core Data Managed Object Context
      *  - initialze the Person's properties from a dictionary
      */
+    
+    init(usingPhotoPath: String) {
+        self.photoPath = usingPhotoPath
+    }
+
+    
+    var photoImage: UIImage? {
+        
+        get {
+            return Caches.imageCache.imageWithIdentifier(photoPath)
+        }
+        
+        set {
+            Caches.imageCache.storeImage(newValue, withIdentifier: photoPath)
+        }
+        
+    }
+    
+    
+    struct Caches {
+        static let imageCache = ImageCache()
+    }
+
+    
     
     init(dictionary: [String : AnyObject], context: NSManagedObjectContext) {
         
