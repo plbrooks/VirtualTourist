@@ -11,7 +11,7 @@ import Foundation
 class Constants: NSObject {
     
     static let databaseName = "VirtualTourist.sqlite"
-    static let maxNumOfPhotos = 10
+    static let maxNumOfPhotos = 2
     
     static let documentsDirectoryURL: NSURL = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first!
     static let fileURL: NSURL = documentsDirectoryURL.URLByAppendingPathComponent("VirtualTourist")

@@ -9,34 +9,65 @@
 import Foundation
 import UIKit
 
-class SavedPhoto: NSObject, NSCoding {
+class SavedPhoto: NSObject {
+    static let sharedInstance = SavedPhoto()    // set up shared instance class
+    private override init() {}                      // ensure noone will init
     
-    var photo: UIImage?
-    
-    struct PropertyKey {
-        static let savedPhotoKey = "savedPhotoKey"
-    }
-    
-    func encodeWithCoder(aCoder: NSCoder) {
-        aCoder.encodeObject(photo, forKey: PropertyKey.savedPhotoKey)
-    }
-    
-    required convenience init?(coder aDecoder: NSCoder) {
-        let photo = aDecoder.decodeObjectForKey(PropertyKey.savedPhotoKey) as? UIImage
+    var usingPath = ""
+    var image: UIImage? {
         
-        // Must call designated initilizer.
-        self.init(photo: photo)
+        // FIX GET
+        
+        get {
+            let a: UIImage? = nil
+            //return Caches.imageCache.imageWithIdentifier(photoPath)
+            print("in get")
+            return (a)
+        }
+        
+        set {
+            //http://stackoverflow.com/questions/27042875/ios-uiimagepngrepresentation-writetofile-not-writing-to-intended-directory
+            
+            if (newValue) != nil {
+                let imageData = UIImagePNGRepresentation(newValue!)
+                let filename = usingPath
+                //let subfolder = "SubDirectory"
+                
+                do {
+                    let fileManager = NSFileManager.defaultManager()
+                    let documentsURL = try fileManager.URLForDirectory(.DocumentDirectory, inDomain: .UserDomainMask, appropriateForURL: nil, create: false)
+                    let folderURL = documentsURL
+                    if !folderURL.checkPromisedItemIsReachableAndReturnError(nil) {
+                        try fileManager.createDirectoryAtURL(folderURL, withIntermediateDirectories: true, attributes: nil)
+                    }
+                    let fileURL = folderURL.URLByAppendingPathComponent(filename)
+                    print("fileURL = \(fileURL)")
+                    try imageData!.writeToURL(fileURL, options: .AtomicWrite)
+                } catch let error as NSError {
+                    Status.codeIs.flickrError(type: "writing Photos to disk", code: error.code, text: error.localizedDescription)
+                    print("Error - \(error.localizedDescription)")
+                }
+                
+ 
+                /*let data = UIImagePNGRepresentation(newValue!)
+                let path = CoreDataStackManager.sharedInstance.applicationDocumentsDirectory.URLByAppendingPathComponent(usingPath)
+                let pathString = String(path)
+                do {
+                    print("pathString = \(pathString)")
+                    print("usingPath = \(usingPath)")
+                    let _ = try Bool(data!.writeToFile(pathString, options: NSDataWritingOptions.DataWritingAtomic))
+                    print("file saved")
+                } catch let error as NSError {
+                    Status.codeIs.flickrError(type: "writing Photos to disk", code: error.code, text: error.localizedDescription)
+                    print("Error - \(error.localizedDescription)")
+                }*/
+            }
+        }
     }
-    
-    init?(photo: UIImage?) {
-        // Initialize stored properties.
-        self.photo = photo
-        super.init()
-    }
-    
-    // MARK: Archiving Paths
-    
-    static let DocumentsDirectory = NSFileManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first!
-    static let ArchiveURL = DocumentsDirectory.URLByAppendingPathComponent("Photo") // NEED TO CHANGE
-    
+
+
+
+
+
+
 }

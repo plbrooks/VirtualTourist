@@ -27,8 +27,8 @@ class Photo : NSManagedObject {
         static let Pin = "pin"
     }
     
-   var photoPath = ""
-    
+    //var usingPhotoPath = ""
+       
     // 3. We are promoting these four from simple properties, to Core Data attributes
      @NSManaged var imagepath: String
      //@NSManaged var pin: Pin?
@@ -47,27 +47,35 @@ class Photo : NSManagedObject {
      *  - initialze the Person's properties from a dictionary
      */
     
-    init(usingPhotoPath: String) {
+    /*init(usingPhotoPath: String) {
         self.photoPath = usingPhotoPath
-    }
+    }*/
 
     
-    var photoImage: UIImage? {
+    /*var image: UIImage? {
+        
+        // FIX GET
         
         get {
-            return Caches.imageCache.imageWithIdentifier(photoPath)
+            let a: UIImage? = nil
+            //return Caches.imageCache.imageWithIdentifier(photoPath)
+            return (a)
         }
         
         set {
-            Caches.imageCache.storeImage(newValue, withIdentifier: photoPath)
+            if (newValue) != nil {
+                let data = UIImagePNGRepresentation(newValue!)
+                data!.writeToFile(usingPhotoPath, atomically: true)
+                
+                // ERROR CHECK
+            }
         }
-        
-    }
+    }*/
     
     
-    struct Caches {
+    /*struct Caches {
         static let imageCache = ImageCache()
-    }
+    }*/
 
     
     
@@ -89,15 +97,7 @@ class Photo : NSManagedObject {
         imagepath = dictionary[Keys.Imagepath] as! String
         pin = dictionary[Keys.Pin] as! Pin
     }
-    func save(imageAtURL: NSURL, named: String) {
-        let documentsURL = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first!
-        /*if let image = UIImage(data: imageData) {
-            let fileURL = documentsURL.URLByAppendingPathComponent(named+".png")
-            if let pngImageData = UIImagePNGRepresentation(image) {
-                pngImageData.writeToURL(fileURL, atomically: false)
-            }
-        }*/
-    }
+    
     
     // MARK: - Helper
     

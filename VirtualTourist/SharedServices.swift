@@ -43,8 +43,9 @@ class SharedServices: NSObject {
         case Status.codeIs.saveContext (let code, let text):
             errMessage = substituteKeyInString(Status.textIs.saveContext, key: "STATUSCODE", value: String(code))!
             errMessage = substituteKeyInString(errMessage, key: "TEXT", value: text)!
-        case Status.codeIs.flickrError(let code, let text):
-            errMessage = substituteKeyInString(Status.textIs.flickrError, key: "STATUSCODE", value: String(code))!
+        case Status.codeIs.flickrError(let type, let code, let text):
+            errMessage = substituteKeyInString(Status.textIs.flickrError, key: "TYPE", value: String(type))!
+            errMessage = substituteKeyInString(errMessage, key: "STATUSCODE", value: String(code))!
             errMessage = substituteKeyInString(errMessage, key: "TEXT", value: text)!
         default:    // no error
             errMessage = Status.textIs.noError
@@ -76,8 +77,6 @@ class SharedServices: NSObject {
             viewController.presentViewController(alertView, animated: true, completion: nil)
         })
     }
-
-
 
 
 

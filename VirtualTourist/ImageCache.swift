@@ -8,7 +8,10 @@
 
 import UIKit
 
-class ImageCache {
+class ImageCache: NSObject {
+    
+    /*static let sharedInstance = ImageCache()    // set up shared instance class
+        private override init() {}                      // ensure noone will init*/
     
     private var inMemoryCache = NSCache()
     

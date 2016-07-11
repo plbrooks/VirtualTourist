@@ -10,11 +10,11 @@ import UIKit
 import CoreData
 import MapKit
 
-class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControllerDelegate {
+class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControllerDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate {
 
     
     @IBOutlet weak var mapView: MKMapView!
-    
+      
     var mapCenterPosition = CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0)
     
     
@@ -23,6 +23,29 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
         mapView.delegate = self
         setMap(mapCenterPosition)       // set up the map view of the selected annotation
     }
+    
+    
+    // tell the collection view how many cells to make
+    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 2
+    }
+    
+    // make a cell for each cell index path
+    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+        
+        // get a reference to our storyboard cell
+        let reuseID = "photoCell"
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseID, forIndexPath: indexPath) as! PhotoCollectionViewCell
+        
+        // Use the outlet in our custom class to get a reference to the UILabel in the cell
+        //cell.myLabel.text = self.items[indexPath.item]
+        print("I am in collectionview")
+        //cell.PhotoCollectionViewCellImage = nil
+        cell.backgroundColor = UIColor.yellowColor() // make cell more visible in our example project
+        
+        return cell
+    }
+    
     
     @IBAction func addNewCollection(sender: AnyObject) {
     }

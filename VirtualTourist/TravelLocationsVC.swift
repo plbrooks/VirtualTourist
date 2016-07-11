@@ -146,6 +146,7 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
             // START TO FETCH PHOTOS - IN PROCESS
             SharedNetworkServices.sharedInstance.test(Constants.maxNumOfPhotos, coordinate: (view.annotation?.coordinate)!) {(inner: () throws -> Bool) -> Void in
                 do {
+                    print("in inner")
                     try inner() // if successful continue else catch the error code
                     let controller =
                     self.storyboard!.instantiateViewControllerWithIdentifier("PhotoAlbumVC")
