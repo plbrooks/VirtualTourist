@@ -26,7 +26,7 @@ class CoreDataStackManager: NSObject {
      *  Instantiate the applicationDocumentsDirectory property                                                      *
      ****************************************************************************************************************/
     lazy var applicationDocumentsDirectory: NSURL = {
-        print("Instantiating the applicationDocumentsDirectory property")
+        //print("Instantiating the applicationDocumentsDirectory property")
 
         let urls = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first!
         //return urls[urls.count-1]
@@ -38,7 +38,7 @@ class CoreDataStackManager: NSObject {
      * It is a fatal error for the application not to be able to find and load its model.                           *
      ****************************************************************************************************************/
     lazy var managedObjectModel: NSManagedObjectModel = {
-        print("Instantiating the managedObjectModel property")
+        //print("Instantiating the managedObjectModel property")
         let modelURL = NSBundle.mainBundle().URLForResource(Constants.modelURL.name, withExtension: Constants.modelURL.ext)!
         //let modelURL = NSURL(string:"file:///Users/Peter/Desktop/Model.momd")!
         return NSManagedObjectModel(contentsOfURL: modelURL)!
@@ -56,7 +56,7 @@ class CoreDataStackManager: NSObject {
      * - A configured Managed Object Model. See the next property for details.                                                      *
      ********************************************************************************************************************************/
     lazy var persistentStoreCoordinator: NSPersistentStoreCoordinator? = {
-        print("Instantiating the persistentStoreCoordinator property")
+        //print("Instantiating the persistentStoreCoordinator property")
         
         let coordinator: NSPersistentStoreCoordinator? = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
         //let url = self.applicationDocumentsDirectory.URLByAppendingPathComponent(SQLITE_FILE_NAME)

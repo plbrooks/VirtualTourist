@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D001E6601D3662FC000314B4 /* test.png in Resources */ = {isa = PBXBuildFile; fileRef = D001E65F1D3662FC000314B4 /* test.png */; };
 		D01905D21C62A13E007B4E2B /* Pin.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01905D11C62A13E007B4E2B /* Pin.swift */; };
 		D01905D41C62A6D3007B4E2B /* Photo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01905D31C62A6D3007B4E2B /* Photo.swift */; };
 		D02A79E71C5C730800510439 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D02A79E61C5C730800510439 /* AppDelegate.swift */; };
@@ -49,6 +50,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		D001E65F1D3662FC000314B4 /* test.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = test.png; sourceTree = "<group>"; };
 		D01905D11C62A13E007B4E2B /* Pin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pin.swift; sourceTree = "<group>"; };
 		D01905D31C62A6D3007B4E2B /* Photo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Photo.swift; sourceTree = "<group>"; };
 		D02A79E31C5C730800510439 /* VirtualTourist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VirtualTourist.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -133,6 +135,7 @@
 				D02A7A221C6130D500510439 /* VirtualTourist.swift */,
 				D0F7953E1D333AE6008CD91B /* PhotoCollectionViewCell.swift */,
 				D02A7A241C61314B00510439 /* Config.swift */,
+				D001E65F1D3662FC000314B4 /* test.png */,
 				D052C8FB1C657F29002C9DB5 /* VCs */,
 				D052C8F61C650122002C9DB5 /* CoreDataServices */,
 				D02A7A1D1C6104AC00510439 /* Model */,
@@ -308,6 +311,7 @@
 			files = (
 				D02A79F11C5C730800510439 /* LaunchScreen.storyboard in Resources */,
 				D02A79EE1C5C730800510439 /* Assets.xcassets in Resources */,
+				D001E6601D3662FC000314B4 /* test.png in Resources */,
 				D02A79EC1C5C730800510439 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

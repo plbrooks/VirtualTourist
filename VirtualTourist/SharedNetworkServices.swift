@@ -33,11 +33,12 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
                 try inner2() // if successful continue else catch the error code
                 self.getURLsFromFlickrPage(self.randomPageNumber, coordinate: coordinate) {(inner3: () throws -> Bool) -> Void in
                     do {
-                        print("after get URLs from FlickrPage")
+                        //print("after get URLs from FlickrPage")
                         try inner3() // if successful continue else catch the error code
                         self.storePhotos() {(inner4: () throws -> Bool) -> Void in
                             do {
                                 try inner4() // if successful continue else catch the error code
+                                // NUMBER OF PHOTOS
                                 completionHandler(inner: {true})
                             } catch let error {
                                 completionHandler(inner: {throw error})
@@ -123,7 +124,6 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
         
     }
 
-    
     func checkForFlickrDataReturned(data: NSData?, response: NSURLResponse?, error: NSError?) throws -> Void {
         guard (error == nil)  else {    // was there an error returned?
             print("Flickr error")
@@ -145,7 +145,7 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
     /* Store photos*/
     
     func storePhotos(completionHandler: (inner: () throws -> Bool) -> Void) {
-        print("urldict to be stored = \(self.URLDictionary)")
+        //print("urldict to be stored = \(self.URLDictionary)")
         let session = NSURLSession.sharedSession()
         for (Key, PhotoURL) in URLDictionary {
             let URLString = NSURL(string: PhotoURL)
@@ -177,9 +177,6 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
     struct Caches {
         static let imageCache = ImageCache()
     }
-
-    
-    
     
     /* Function makes first request to get a random page, then it makes a request to get an image with the random page */
     
@@ -335,11 +332,11 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
                                 
                                 
                                 print("pin retrieved from Network Services lat and long = \(pin.latitude), \(pin.longitude)")
-                                for i in 1...URLCount {
+                                for _ in 1...URLCount {
                                     let randomPhotoIndex = Int(arc4random_uniform(UInt32(photosDictionary!.count)))
                                     let randomPhoto = photosDictionary![randomPhotoIndex]
                                     
-                                    print("randomPhoto = \(randomPhoto)")
+                                    //print("randomPhoto = \(randomPhoto)")
                                     
                                     /* GUARD: Does our photo have a key for 'url_m'? */
                                     guard let imageURLString = randomPhoto["url_m"] as? String else {
@@ -353,7 +350,7 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
                                     ]
                                     
                                     let _ = Photo(dictionary: dictionary, context: self.sharedContext)
-                                    //print("photo imagepath and pin added - \(imageURLString), pin = \(pin.latitude), \(pin.longitude)")
+                                    print("photo imagepath and pin added - \(imageURLString), pin = \(pin.latitude), \(pin.longitude)")
                                     
                                     /* add info to dictionary later used to add files to disk */
                                     let key = (randomPhoto["server"] as! String) + (randomPhoto["id"] as! String)
@@ -365,7 +362,7 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
                                     
                                 }
                                 CoreDataStackManager.sharedInstance.saveContext()
-                                print("URLdict after core data store  = \(self.URLDictionary)")
+                                //print("URLdict after core data store  = \(self.URLDictionary)")
 
                                 //CHECK FOR ERROR
                             

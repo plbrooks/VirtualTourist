@@ -39,9 +39,10 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
         
         // Use the outlet in our custom class to get a reference to the UILabel in the cell
         //cell.myLabel.text = self.items[indexPath.item]
-        print("I am in collectionview")
+        //print("I am in collectionview")
         //cell.PhotoCollectionViewCellImage = nil
-        cell.backgroundColor = UIColor.yellowColor() // make cell more visible in our example project
+        cell.backgroundColor = UIColor.whiteColor() // make cell more visible in our example project
+        cell.image.image = UIImage(named:"test.png")
         
         return cell
     }
