@@ -162,8 +162,8 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
                         // save the file
                         //http://stackoverflow.com/questions/26411635/how-do-i-find-the-last-occurrence-of-a-substring-in-a-swift-string
                         // MAYBE TOO COMPLICATED, NEED TO USE KEY SINCE IT IS A KEY USED ELSEWHERE
-                        SavedPhoto.sharedInstance.usingPath = Key + ".jpg"
-                        SavedPhoto.sharedInstance.image = image
+                        AlbumPhoto.sharedInstance.usingFilename = Key + ".jpg"
+                        AlbumPhoto.sharedInstance.image = image
                     }
                 } catch let error as NSError {
                     Status.codeIs.flickrError(type: "saving Photos", code: error.code, text: error.localizedDescription)

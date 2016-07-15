@@ -1,5 +1,5 @@
 //
-//  SavedPhoto.swift
+//  AlbumPhoto.swift
 //  VirtualTourist
 //
 //  Created by Peter Brooks on 2/7/16.
@@ -9,20 +9,35 @@
 import Foundation
 import UIKit
 
-class SavedPhoto: NSObject {
-    static let sharedInstance = SavedPhoto()    // set up shared instance class
+class AlbumPhoto: NSObject {
+    static let sharedInstance = AlbumPhoto()    // set up shared instance class
     private override init() {}                      // ensure noone will init
     
-    var usingPath = ""
+    var usingFilename = ""
     var image: UIImage? {
         
         // FIX GET
         
         get {
-            let a: UIImage? = nil
             //return Caches.imageCache.imageWithIdentifier(photoPath)
             print("in get")
-            return (a)
+            var imageData: NSData? = nil
+            if (usingFilename != "") {
+                do {
+                    let fileManager = NSFileManager.defaultManager()
+                    let documentsURL = try fileManager.URLForDirectory(.DocumentDirectory, inDomain: .UserDomainMask, appropriateForURL: nil, create: false)
+                    //let folderURL = documentsURL
+                    if documentsURL.checkPromisedItemIsReachableAndReturnError(nil) {   // file found
+                        imageData = NSData(contentsOfURL: documentsURL)
+                    }
+                    //let fileURL = documentsURL.URLByAppendingPathComponent(usingFilename)
+                    print("getting documentsURL = \(documentsURL)")
+                } catch let error as NSError {
+                    Status.codeIs.flickrError(type: "writing Photos to disk", code: error.code, text: error.localizedDescription)
+                    print("Error - \(error.localizedDescription)")
+                }
+            }
+            return (UIImage(data: imageData!))
         }
         
         set {
@@ -30,18 +45,17 @@ class SavedPhoto: NSObject {
             
             if (newValue) != nil {
                 let imageData = UIImagePNGRepresentation(newValue!)
-                let filename = usingPath
                 //let subfolder = "SubDirectory"
                 
                 do {
                     let fileManager = NSFileManager.defaultManager()
                     let documentsURL = try fileManager.URLForDirectory(.DocumentDirectory, inDomain: .UserDomainMask, appropriateForURL: nil, create: false)
-                    let folderURL = documentsURL
-                    if !folderURL.checkPromisedItemIsReachableAndReturnError(nil) {
-                        try fileManager.createDirectoryAtURL(folderURL, withIntermediateDirectories: true, attributes: nil)
+                    //let folderURL = documentsURL
+                    if !documentsURL.checkPromisedItemIsReachableAndReturnError(nil) {
+                        try fileManager.createDirectoryAtURL(documentsURL, withIntermediateDirectories: true, attributes: nil)
                     }
-                    let fileURL = folderURL.URLByAppendingPathComponent(filename)
-                    print("fileURL = \(fileURL)")
+                    let fileURL = documentsURL.URLByAppendingPathComponent(usingFilename)
+                    print("saving documentsURL = \(documentsURL)")
                     try imageData!.writeToURL(fileURL, options: .AtomicWrite)
                 } catch let error as NSError {
                     Status.codeIs.flickrError(type: "writing Photos to disk", code: error.code, text: error.localizedDescription)

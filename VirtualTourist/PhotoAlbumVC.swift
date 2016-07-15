@@ -16,18 +16,22 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
     @IBOutlet weak var mapView: MKMapView!
       
     var mapCenterPosition = CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0)
+    //var imageDict:
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
         mapView.delegate = self
         setMap(mapCenterPosition)       // set up the map view of the selected annotation
+        //photoList
     }
     
     
     // tell the collection view how many cells to make
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 2
+        // number of photos in photoList
+        print("count = \(SharedNetworkServices.sharedInstance.URLDictionary.keys.count)")
+        return SharedNetworkServices.sharedInstance.URLDictionary.keys.count
     }
     
     // make a cell for each cell index path
@@ -42,7 +46,7 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
         //print("I am in collectionview")
         //cell.PhotoCollectionViewCellImage = nil
         cell.backgroundColor = UIColor.whiteColor() // make cell more visible in our example project
-        cell.image.image = UIImage(named:"test.png")
+        //cell.image.image = AlbumPhoto
         
         return cell
     }
