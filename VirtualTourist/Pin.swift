@@ -34,8 +34,8 @@ class Pin : NSManagedObject {
     @NSManaged var latitude: NSNumber
     @NSManaged var longitude: NSNumber
     //@NSManaged var location: CLLocationCoordinate2D
-    //@NSManaged var photos: [Photo]
-    @NSManaged var photos: NSSet
+    @NSManaged var photos: [Photo]
+    //@NSManaged var photos: NSSet
     
     // 4. Include this standard Core Data init method.
     override init(entity: NSEntityDescription, insertIntoManagedObjectContext context: NSManagedObjectContext?) {

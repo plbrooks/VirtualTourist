@@ -23,7 +23,7 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
     var randomPageNumber = 0
     var URLDictionary = [String: String]()
     
-    func test(maxNumOfPhotos:Int, coordinate: CLLocationCoordinate2D, completionHandler: (inner: () throws -> Bool) -> Void) {
+    func savePhotos(maxNumOfPhotos:Int, coordinate: CLLocationCoordinate2D, completionHandler: (inner: () throws -> Bool) -> Void) {
         
         randomPageNumber = 0
         URLDictionary = [:]
@@ -35,7 +35,7 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
                     do {
                         //print("after get URLs from FlickrPage")
                         try inner3() // if successful continue else catch the error code
-                        self.storePhotos() {(inner4: () throws -> Bool) -> Void in
+                        /*self.storePhotos() {(inner4: () throws -> Bool) -> Void in
                             do {
                                 try inner4() // if successful continue else catch the error code
                                 // NUMBER OF PHOTOS
@@ -43,7 +43,7 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
                             } catch let error {
                                 completionHandler(inner: {throw error})
                             }
-                        }
+                        }*/
                     } catch let error {
                         completionHandler(inner: {throw error})
                     }
@@ -162,8 +162,8 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
                         // save the file
                         //http://stackoverflow.com/questions/26411635/how-do-i-find-the-last-occurrence-of-a-substring-in-a-swift-string
                         // MAYBE TOO COMPLICATED, NEED TO USE KEY SINCE IT IS A KEY USED ELSEWHERE
-                        AlbumPhoto.sharedInstance.usingFilename = Key + ".jpg"
-                        AlbumPhoto.sharedInstance.image = image
+                        //AlbumPhoto.sharedInstance.usingFilename = Key + ".jpg"
+                        //AlbumPhoto.sharedInstance.image = image
                     }
                 } catch let error as NSError {
                     Status.codeIs.flickrError(type: "saving Photos", code: error.code, text: error.localizedDescription)
@@ -174,8 +174,8 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
         }
     }
 
-    struct Caches {
-        static let imageCache = ImageCache()
+    struct Cache {
+        static let photoCache = PhotoCache()
     }
     
     /* Function makes first request to get a random page, then it makes a request to get an image with the random page */
@@ -322,7 +322,7 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
                     let secondPredicate = NSPredicate(format: "longitude == %@", testLong)
                     let predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [firstPredicate, secondPredicate])
                     request.predicate = predicate
-                    request.sortDescriptors = [NSSortDescriptor(key: "latitude", ascending: true)]
+                    request.sortDescriptors = []
                     let context = self.sharedContext
                     do {
                         let pins = try context.executeFetchRequest(request) as! [Pin]
@@ -344,18 +344,17 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
                                         return
                                     }
                                     
-                                    let dictionary: [String : AnyObject] = [
-                                        Photo.Keys.Imagepath   : imageURLString,
-                                        Photo.Keys.Pin : pin
-                                    ]
+                                    //let dictionary: [String : AnyObject] = [
+                                      //  Photo.Keys.PhotoPath   : imageURLString]
+                                        //Photo.Keys.Photo : nil]
                                     
-                                    let _ = Photo(dictionary: dictionary, context: self.sharedContext)
-                                    print("photo imagepath and pin added - \(imageURLString), pin = \(pin.latitude), \(pin.longitude)")
+                                    //let _ = Photo(dictionary: dictionary, context: self.sharedContext)
+                                    //print("photo imagepath and pin added - \(imageURLString), pin = \(pin.latitude), \(pin.longitude)")
                                     
                                     /* add info to dictionary later used to add files to disk */
                                     let key = (randomPhoto["server"] as! String) + (randomPhoto["id"] as! String)
                                     self.URLDictionary[key] = imageURLString
-                                    //print("URLdict key, value created = \(key), \(imageURLString), URLDict = \(self.URLDictionary)")
+                                    print("URLdict key, value created = \(key), \(imageURLString)")
                             
                                     // CHECK EACH ITEM IS NOT NIL
                                     

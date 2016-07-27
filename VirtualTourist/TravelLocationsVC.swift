@@ -24,6 +24,29 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
     var mapViewTopStartPosition: CGFloat = 0
     var mapViewBottomStartPosition: CGFloat = 0
     
+    lazy var pinFetchedResultsController: NSFetchedResultsController = {
+        let request = NSFetchRequest(entityName: "Pin")
+        request.sortDescriptors = []
+        let pinFetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: self.sharedContext,sectionNameKeyPath: nil,cacheName: nil)
+        pinFetchedResultsController.delegate = self
+        return pinFetchedResultsController
+    }()
+    
+    lazy var photoFetchedResultsController: NSFetchedResultsController = {
+        
+        let fetchRequest = NSFetchRequest(entityName: "Photo")
+        
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "imagepath", ascending: true)]
+        
+        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
+                                                                  managedObjectContext: self.sharedContext,
+                                                                  sectionNameKeyPath: nil,
+                                                                  cacheName: nil)
+        
+        return fetchedResultsController
+        
+    }()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -110,15 +133,16 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
             annotations.append(annotation)
             mapView.addAnnotations(annotations)
             
-            // START TO ADD PHOTOS- LATER
+            // start to add photos
             
-            /*SharedMethod.getImagesFromFlickr(Constants.maxNumOfPhotos) {(inner: () throws -> Bool) -> Void in
+            SharedNetworkServices.sharedInstance.savePhotos(Constants.maxNumOfPhotos, coordinate: coordinate) {(inner: () throws -> Bool) -> Void in
                 do {
+                    //print("in test inner")
                     try inner() // if successful continue else catch the error code
                 } catch let error {
                     SharedMethod.showAlert(error, title: "Error", viewController: self)
                 }
-            }*/
+            }
         }
     }
     
@@ -144,9 +168,9 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
             }*/
             
             // START TO FETCH PHOTOS - IN PROCESS
-            SharedNetworkServices.sharedInstance.test(Constants.maxNumOfPhotos, coordinate: (view.annotation?.coordinate)!) {(inner: () throws -> Bool) -> Void in
+            /*SharedNetworkServices.sharedInstance.getPhotos(Constants.maxNumOfPhotos, coordinate: (view.annotation?.coordinate)!) {(inner: () throws -> Bool) -> Void in
                 do {
-                    //print("in inner")
+                    //print("in test inner")
                     try inner() // if successful continue else catch the error code
                     let controller =
                     self.storyboard!.instantiateViewControllerWithIdentifier("PhotoAlbumVC")
@@ -156,19 +180,21 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
                 } catch let error {
                     SharedMethod.showAlert(error, title: "Error", viewController: self)
                 }
-            }
+            }*/
     }
     
     func getPins() {
-        let request = NSFetchRequest(entityName: "Pin")
-        request.sortDescriptors = [NSSortDescriptor(key: "latitude", ascending: true)]
-        let context = self.sharedContext
+        //let request = NSFetchRequest(entityName: "Pin")
+        //request.sortDescriptors = [NSSortDescriptor(key: "latitude", ascending: true)]
+        //let context = self.sharedContext
         
         do {
-            let pins = try context.executeFetchRequest(request) as! [Pin]
-            if (pins.count > 0) {
+            //let pins = try context.executeFetchRequest(request) as! [Pin]
+            try self.pinFetchedResultsController.performFetch()
+            let fetchedObjects = pinFetchedResultsController.fetchedObjects
+            if (fetchedObjects!.count > 0) {
                 var annotations = [MKPointAnnotation]()
-                for pin: Pin in pins {
+                for pin in fetchedObjects as! [Pin] {
                     let annotation = MKPointAnnotation()
                     let coordinate  = CLLocationCoordinate2D(latitude: pin.latitude as Double, longitude: pin.longitude as Double)
                     annotation.coordinate = coordinate
@@ -212,40 +238,5 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
         return CoreDataStackManager.sharedInstance.managedObjectContext
     }
     
-    // Step 1 - Add the lazy fetchedResultsController property. See the reference sheet in the lesson if you
-    // want additional help creating this property.
-    
-    /*lazy var pinFetchedResultsController: NSFetchedResultsController = {
-        
-        let fetchRequest = NSFetchRequest(entityName: "Pin")
-        
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "latitude", ascending: true)]
-        
-        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
-            managedObjectContext: self.sharedContext,
-            sectionNameKeyPath: nil,
-            cacheName: nil)
-        
-        return fetchedResultsController
-        
-    }()
-    
-    lazy var photoFetchedResultsController: NSFetchedResultsController = {
-        
-        let fetchRequest = NSFetchRequest(entityName: "Photo")
-        
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "imagepath", ascending: true)]
-        
-        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
-            managedObjectContext: self.sharedContext,
-            sectionNameKeyPath: nil,
-            cacheName: nil)
-        
-        return fetchedResultsController
-        
-    }()*/
-    
-
-
 }
 

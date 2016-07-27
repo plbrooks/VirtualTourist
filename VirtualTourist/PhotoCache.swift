@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ImageCache: NSObject {
+class PhotoCache: NSObject {
     
     /*static let sharedInstance = ImageCache()    // set up shared instance class
         private override init() {}                      // ensure noone will init*/
@@ -35,6 +35,9 @@ class ImageCache: NSObject {
         if let data = NSData(contentsOfFile: path) {
             return UIImage(data: data)
         }
+        
+        //MAYBE get from flickr if not on HD else return nil?
+        
         
         return nil
     }

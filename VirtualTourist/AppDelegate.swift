@@ -1,4 +1,4 @@
-store //
+//
 //  AppDelegate.swift
 //  VirtualTourist
 //
