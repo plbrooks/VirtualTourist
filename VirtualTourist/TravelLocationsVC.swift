@@ -166,7 +166,13 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
                 // failure
                 print("Fetch failed: \(error.localizedDescription)")
             }*/
-            
+        let controller =
+            self.storyboard!.instantiateViewControllerWithIdentifier("PhotoAlbumVC")
+                as! PhotoAlbumVC
+        controller.mapCenterPosition = CLLocationCoordinate2D(latitude: (view.annotation?.coordinate.latitude)!, longitude: (view.annotation?.coordinate.longitude)!)
+        self.navigationController!.pushViewController(controller, animated: true)
+
+    
             // START TO FETCH PHOTOS - IN PROCESS
             /*SharedNetworkServices.sharedInstance.getPhotos(Constants.maxNumOfPhotos, coordinate: (view.annotation?.coordinate)!) {(inner: () throws -> Bool) -> Void in
                 do {

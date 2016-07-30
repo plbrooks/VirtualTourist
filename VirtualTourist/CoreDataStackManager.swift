@@ -69,6 +69,7 @@ class CoreDataStackManager: NSObject {
         }
         return coordinator
     }()
+    
     // MARK: - Managed Object Context Processing
     
     /****************************************************************************************************************
