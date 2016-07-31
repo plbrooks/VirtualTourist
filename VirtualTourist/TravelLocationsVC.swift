@@ -24,7 +24,17 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
     var mapViewTopStartPosition: CGFloat = 0
     var mapViewBottomStartPosition: CGFloat = 0
     
-    lazy var pinFetchedResultsController: NSFetchedResultsController = {
+    var newPin: Pin?
+    
+    lazy var allPinsFetchedResultsController: NSFetchedResultsController = {
+        let request = NSFetchRequest(entityName: "Pin")
+        request.sortDescriptors = []
+        let pinFetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: self.sharedContext,sectionNameKeyPath: nil,cacheName: nil)
+        pinFetchedResultsController.delegate = self
+        return pinFetchedResultsController
+    }()
+    
+    lazy var onePinFetchedResultsController: NSFetchedResultsController = {
         let request = NSFetchRequest(entityName: "Pin")
         request.sortDescriptors = []
         let pinFetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: self.sharedContext,sectionNameKeyPath: nil,cacheName: nil)
@@ -33,12 +43,10 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
     }()
     
     lazy var photoFetchedResultsController: NSFetchedResultsController = {
-        
-        let fetchRequest = NSFetchRequest(entityName: "Photo")
-        
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "imagepath", ascending: true)]
-        
-        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
+        let request = NSFetchRequest(entityName: "Photo")
+        request.sortDescriptors = [NSSortDescriptor(key: "imagepath", ascending: true)]
+        request.predicate = nil
+        let fetchedResultsController = NSFetchedResultsController(fetchRequest: request,
                                                                   managedObjectContext: self.sharedContext,
                                                                   sectionNameKeyPath: nil,
                                                                   cacheName: nil)
@@ -125,7 +133,7 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
             
             print ("pin lat,long to store = \(dictionary["latitude"]), \(dictionary["longitude"])")
             
-            let _ = Pin(dictionary: dictionary, context: sharedContext)
+            newPin = Pin(dictionary: dictionary, context: sharedContext)
             CoreDataStackManager.sharedInstance.saveContext()
             var annotations = [MKPointAnnotation]()
             let annotation = MKPointAnnotation()
@@ -135,7 +143,7 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
             
             // start to add photos
             
-            SharedNetworkServices.sharedInstance.savePhotos(Constants.maxNumOfPhotos, coordinate: coordinate) {(inner: () throws -> Bool) -> Void in
+            SharedNetworkServices.sharedInstance.savePhotos(Constants.maxNumOfPhotos, pin: newPin!) {(inner: () throws -> Bool) -> Void in
                 do {
                     //print("in test inner")
                     try inner() // if successful continue else catch the error code
@@ -151,25 +159,37 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
      ********************************************************************************************************/
     func mapView(mapView: MKMapView,
         didSelectAnnotationView view: MKAnnotationView) {
+        let controller = self.storyboard!.instantiateViewControllerWithIdentifier("PhotoAlbumVC")
+            as! PhotoAlbumVC
         
-            //let request = NSFetchRequest(entityName: "Pin")
-            //let firstPredicate = NSPredicate(format: "latitude == %@", view.annotation!.coordinate.latitude)
-            //let secondPredicate = NSPredicate(format: "longitude == %@", view.annotation!.coordinate.longitude)
-            //let predicate = NSCompoundPredicate(type: NSCompoundPredicateType.OrPredicateType, subpredicates: [firstPredicate, secondPredicate])
-            //request.predicate = predicate
-            /*(request.sortDescriptors = [NSSortDescriptor(key: "latitude", ascending: true)]
-            let context = self.sharedContext
-            do {
-                let pin = try context.executeFetchRequest(request) as! [Pin]
-                print("pin = \(pin)")
-            } catch let error as NSError {
-                // failure
-                print("Fetch failed: \(error.localizedDescription)")
-            }*/
-        let controller =
-            self.storyboard!.instantiateViewControllerWithIdentifier("PhotoAlbumVC")
-                as! PhotoAlbumVC
-        controller.mapCenterPosition = CLLocationCoordinate2D(latitude: (view.annotation?.coordinate.latitude)!, longitude: (view.annotation?.coordinate.longitude)!)
+        //http://stackoverflow.com/questions/2026649/nspredicate-dont-work-with-double-values-f
+        
+        //let firstPredicate = NSPredicate(format: "latitude == 0")
+        let epsilon:Double = DBL_EPSILON
+        print("lats = \(view.annotation!.coordinate.latitude + epsilon), \(view.annotation!.coordinate.latitude + epsilon)")
+        let firstPredicate = NSPredicate(format: "latitude <= %lf and latitude => %lf",view.annotation!.coordinate.latitude + epsilon, view.annotation!.coordinate.latitude - epsilon)
+        //let firstPredicate = NSPredicate(format: "latitude == %d", view.annotation!.coordinate.latitude)
+        //let secondPredicate = NSPredicate(format: "longitude == %d", view.annotation!.coordinate.longitude)
+        //let predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [firstPredicate, secondPredicate])
+        //onePinFetchedResultsController.fetchRequest.predicate = NSPredicate(format:"latitude == %lf and longitude == %lf", view.annotation!.coordinate.latitude, view.annotation!.coordinate.longitude)
+        
+        onePinFetchedResultsController.fetchRequest.predicate = firstPredicate
+        do {
+            try self.onePinFetchedResultsController.performFetch()
+            let fetchedObjects = onePinFetchedResultsController.fetchedObjects
+            if (fetchedObjects!.count == 1) {
+                for pin in fetchedObjects as! [Pin] {
+                    controller.pin = pin
+                }
+            } else {
+                print("\(fetchedObjects!.count) not 1 pin(s) returned")
+            }
+        } catch let error as NSError {
+            // failure
+            print("Fetch failed: \(error.localizedDescription)")
+        }
+  
+        /*controller.mapCenterPosition = CLLocationCoordinate2D(latitude: (view.annotation?.coordinate.latitude)!, longitude: (view.annotation?.coordinate.longitude)!)*/
         self.navigationController!.pushViewController(controller, animated: true)
 
     
@@ -196,8 +216,8 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
         
         do {
             //let pins = try context.executeFetchRequest(request) as! [Pin]
-            try self.pinFetchedResultsController.performFetch()
-            let fetchedObjects = pinFetchedResultsController.fetchedObjects
+            try self.allPinsFetchedResultsController.performFetch()
+            let fetchedObjects = allPinsFetchedResultsController.fetchedObjects
             if (fetchedObjects!.count > 0) {
                 var annotations = [MKPointAnnotation]()
                 for pin in fetchedObjects as! [Pin] {
@@ -209,7 +229,7 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
                 }
                 mapView.addAnnotations(annotations)
             } else {
-                print("No Users")
+                print("No Pins")
             }
         } catch let error as NSError {
             // failure

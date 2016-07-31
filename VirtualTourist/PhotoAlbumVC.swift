@@ -15,14 +15,15 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
     
     @IBOutlet weak var mapView: MKMapView!
       
-    var mapCenterPosition = CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0)
-    //var imageDict:
     
+    
+    var pin: Pin?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         mapView.delegate = self
-        setMap(mapCenterPosition)       // set up the map view of the selected annotation
+        print("photo album pin = \(pin)")
+        setMap(pin!)       // set up the map view of the selected annotation
         //photoList
     }
     
@@ -56,15 +57,18 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
     }
 
     
-    func setMap(center: CLLocationCoordinate2D) {
+    func setMap(center: Pin) {
         // add the one annotation to the map view
         let myAnnotation = MKPointAnnotation()
-        myAnnotation.coordinate = center
+        
+        let location = CLLocationCoordinate2D(latitude: pin!.latitude as Double, longitude:pin!.longitude as Double)
+        
+        myAnnotation.coordinate = location
         self.mapView.addAnnotation(myAnnotation)
         
         // do some map housekeeping - set span, center, etc.
         let span = MKCoordinateSpanMake(1.0,1.0)        // set reasonable granularity
-        let region = MKCoordinateRegion(center: center , span: span ) // center map
+        let region = MKCoordinateRegion(center: location , span: span ) // center map
         self.mapView.setRegion(region, animated: true)  // show the map
     }
     

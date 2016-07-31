@@ -23,19 +23,19 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
     var randomPageNumber = 0
     var URLDictionary = [String: String]()
     
-    func savePhotos(maxNumOfPhotos:Int, coordinate: CLLocationCoordinate2D, completionHandler: (inner: () throws -> Bool) -> Void) {
+    func savePhotos(maxNumOfPhotos:Int, pin: Pin, completionHandler: (inner: () throws -> Bool) -> Void) {
         
         randomPageNumber = 0
         URLDictionary = [:]
         
-        getPageFromFlickr(Constants.maxNumOfPhotos, coordinate: coordinate) {(inner2: () throws -> Bool) -> Void in
+        getPageFromFlickr(Constants.maxNumOfPhotos, pin: pin) {(inner2: () throws -> Bool) -> Void in
             do {
                 try inner2() // if successful continue else catch the error code
-                self.getURLsFromFlickrPage(self.randomPageNumber, coordinate: coordinate) {(inner3: () throws -> Bool) -> Void in
+                self.getURLsFromFlickrPage(self.randomPageNumber, pin: pin) {(inner3: () throws -> Bool) -> Void in
                     do {
                         //print("after get URLs from FlickrPage")
                         try inner3() // if successful continue else catch the error code
-                        /*self.storePhotos() {(inner4: () throws -> Bool) -> Void in
+                        self.storePhotos(pin) {(inner4: () throws -> Bool) -> Void in
                             do {
                                 try inner4() // if successful continue else catch the error code
                                 // NUMBER OF PHOTOS
@@ -43,7 +43,7 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
                             } catch let error {
                                 completionHandler(inner: {throw error})
                             }
-                        }*/
+                        }
                     } catch let error {
                         completionHandler(inner: {throw error})
                     }
@@ -144,27 +144,29 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
 
     /* Store photos*/
     
-    func storePhotos(completionHandler: (inner: () throws -> Bool) -> Void) {
+    func storePhotos(pin: Pin, completionHandler: (inner: () throws -> Bool) -> Void) {
         //print("urldict to be stored = \(self.URLDictionary)")
         let session = NSURLSession.sharedSession()
-        for (Key, PhotoURL) in URLDictionary {
-            let URLString = NSURL(string: PhotoURL)
+        for (key, photoURL) in URLDictionary {
+            let URLString = NSURL(string: photoURL)
             let request = NSMutableURLRequest(URL: URLString!)
             request.HTTPMethod = "GET"
             let task = session.dataTaskWithRequest(request) { (data,response, error) in
                 do {
                     try self.checkForFlickrDataReturned(data, response: response, error: error)   // Any Flickr errors?
                     /* if here no errors */
+                    print("starting to save photo key \(key) stored in DB")
                     if let data = data {
-                        // Create the image
-                        let image = UIImage(data: data)
-                        //print("Image = \(image)")
-                        // save the file
-                        //http://stackoverflow.com/questions/26411635/how-do-i-find-the-last-occurrence-of-a-substring-in-a-swift-string
-                        // MAYBE TOO COMPLICATED, NEED TO USE KEY SINCE IT IS A KEY USED ELSEWHERE
-                        //AlbumPhoto.sharedInstance.usingFilename = Key + ".jpg"
-                        //AlbumPhoto.sharedInstance.image = image
+                        // save in DB
+                        let dictionary : [String : AnyObject] = [
+                            Photo.Keys.Key : key as String,
+                            Photo.Keys.ImageData : data as NSData,
+                            Photo.Keys.Pin : pin as Pin
+                        ]
+                        let _ = Photo(dictionary: dictionary, context: self.sharedContext)
+                        print("saved photo key \(key) stored in DB")
                     }
+                CoreDataStackManager.sharedInstance.saveContext()
                 } catch let error as NSError {
                     Status.codeIs.flickrError(type: "saving Photos", code: error.code, text: error.localizedDescription)
                     completionHandler(inner: {throw error})
@@ -174,16 +176,16 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
         }
     }
 
-    struct Cache {
-        static let photoCache = PhotoCache()
-    }
+    //struct Cache {
+    //    static let imageCache = ImageCache()
+    //}
     
     /* Function makes first request to get a random page, then it makes a request to get an image with the random page */
     
-        func getPageFromFlickr(maxNumOfPhotos:Int, coordinate: CLLocationCoordinate2D, completionHandler: (inner: () throws -> Bool) -> Void) {
+    func getPageFromFlickr(maxNumOfPhotos:Int, pin: Pin, completionHandler: (inner: () throws -> Bool) -> Void) {
         
         var methodArguments = Constants.FlickrAPI.methodArguments
-        methodArguments["bbox"] = createBoundingBoxString(coordinate.latitude, longitude: coordinate.longitude)
+        methodArguments["bbox"] = createBoundingBoxString(pin.latitude as Double, longitude: pin.longitude as Double)
         let session = NSURLSession.sharedSession()
         let urlString = Constants.FlickrAPI.BASE_URL + escapedParameters(methodArguments)
         let url = NSURL(string: urlString)!
@@ -216,10 +218,9 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
         task.resume()
     }
     
-    func getURLsFromFlickrPage(pageNumber: Int, coordinate: CLLocationCoordinate2D, completionHandler: (inner: () throws -> Bool) -> Void) {
-        
+    func getURLsFromFlickrPage(pageNumber: Int, pin: Pin, completionHandler: (inner: () throws -> Bool) -> Void) {
         var methodArguments = Constants.FlickrAPI.methodArguments    // start with prior arguments
-        methodArguments["bbox"] = createBoundingBoxString(coordinate.latitude, longitude: coordinate.longitude)
+        methodArguments["bbox"] = createBoundingBoxString(pin.latitude as Double, longitude: pin.longitude as Double)
         methodArguments["page"] = pageNumber     // add in a specific page #
         methodArguments["per_page"] = Constants.FlickrAPI.PER_PAGE   // get a lot of photos per page
         
@@ -228,80 +229,7 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
         let url = NSURL(string: urlString)
         let request = NSURLRequest(URL: url!)
         let task = session.dataTaskWithRequest(request) { (data, response, error) in
-            
-            
-            /*
-            /* GUARD: Was there an error? */
-            guard (error == nil) else {
-                print("There was an error with your request: \(error)")
-                return
-            }
-            
-            /* GUARD: Did we get a successful 2XX response? */
-            guard let statusCode = (response as? NSHTTPURLResponse)?.statusCode where statusCode >= 200 && statusCode <= 299 else {
-                if let response = response as? NSHTTPURLResponse {
-                    print("Your request returned an invalid response! Status code: \(response.statusCode)!")
-                } else if let response = response {
-                    print("Your request returned an invalid response! Response: \(response)!")
-                } else {
-                    print("Your request returned an invalid response!")
-                }
-                return
-            }
-            
-            /* GUARD: Was there any data returned? */
-            guard let data = data else {
-                print("No data was returned by the request!")
-                return
-            }
-            
-            /* Parse the data! */
-            let parsedResult: AnyObject!
-            do {
-                parsedResult = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
-            } catch {
-                parsedResult = nil
-                print("Could not parse the data as JSON: '\(data)'")
-                return
-            }
-            
-            /* GUARD: Did Flickr return an error (stat != ok)? */
-            guard let stat = parsedResult["stat"] as? String where stat == "ok" else {
-                print("Flickr API returned an error. See error code and message in \(parsedResult)")
-                return
-            }
-            
-            /* GUARD: Is the "photos" key in our result? */
-            guard let photosContainer = parsedResult["photos"] as? NSDictionary else {
-                print("Cannot find key 'photos' in \(parsedResult)")
-                return
-            }
-            
-            /* GUARD: Is the "total" key in photosDictionary? */
-            guard let numOfPhotos = (photosContainer["total"] as? NSString)?.integerValue else {
-                print("Cannot find key 'total' in \(photosContainer)")
-                return
-            }
-            
-            /* GUARD: Photos found? */
-            guard numOfPhotos > 0 else {
-                print("No photos found")    // BUT THAT IS OK
-                return
-            }
-            /* GUARD: Is the "photo" key in photosDictionary? */
-            guard let photosDictionary = photosContainer["photo"] as? [[String: AnyObject]] else {
-                print("Cannot find key 'photo' in \(photosContainer)")
-                return
-            }
-            
-            /* GUARD: Are there photos in the "photo" key in photosDictionary? */
-            guard photosDictionary.count > 0 else  {
-                print("No photos found")
-                return
-            }
-            //print("photo directory = \(photosDictionary)")*/
-            
-            // Use SERVER and ID to get unique name
+                      // Use SERVER and ID to get unique name
             do {
                 try self.checkForFlickrErrors(data, response: response, error: error)   // Any Flickr errors?
                 /* if here no errors */
@@ -315,7 +243,7 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
                     print("URL count = \(URLCount)")
                     
                     // get pin
-                    let request = NSFetchRequest(entityName: "Pin")
+                    /*let request = NSFetchRequest(entityName: "Pin")
                     let testLat = coordinate.latitude as NSNumber
                     let testLong = coordinate.longitude as NSNumber
                     let firstPredicate = NSPredicate(format: "latitude == %@", testLat)
@@ -323,35 +251,21 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
                     let predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [firstPredicate, secondPredicate])
                     request.predicate = predicate
                     request.sortDescriptors = []
-                    let context = self.sharedContext
-                    do {
-                        let pins = try context.executeFetchRequest(request) as! [Pin]
-                        print("pins.count = \(pins.count)")
-                        if (pins.count == 1) {
-                            for pin: Pin in pins {
-                                
-                                
-                                print("pin retrieved from Network Services lat and long = \(pin.latitude), \(pin.longitude)")
-                                for _ in 1...URLCount {
+                    let context = self.sharedContext*/
+                    //do {
+                        //let pins = try context.executeFetchRequest(request) as! [Pin]
+                        //print("pins.count = \(pins.count)")
+                        //if (pins.count == 1) {
+                            //for pin: Pin in pins {
+                                //print("pin retrieved from Network Services lat and long = \(pin.latitude), \(pin.longitude)")
+                                for _ in 0...URLCount {
                                     let randomPhotoIndex = Int(arc4random_uniform(UInt32(photosDictionary!.count)))
                                     let randomPhoto = photosDictionary![randomPhotoIndex]
-                                    
-                                    //print("randomPhoto = \(randomPhoto)")
-                                    
                                     /* GUARD: Does our photo have a key for 'url_m'? */
                                     guard let imageURLString = randomPhoto["url_m"] as? String else {
                                         print("Cannot find key 'url_m' in \(randomPhoto)")
                                         return
                                     }
-                                    
-                                    //let dictionary: [String : AnyObject] = [
-                                      //  Photo.Keys.PhotoPath   : imageURLString]
-                                        //Photo.Keys.Photo : nil]
-                                    
-                                    //let _ = Photo(dictionary: dictionary, context: self.sharedContext)
-                                    //print("photo imagepath and pin added - \(imageURLString), pin = \(pin.latitude), \(pin.longitude)")
-                                    
-                                    /* add info to dictionary later used to add files to disk */
                                     let key = (randomPhoto["server"] as! String) + (randomPhoto["id"] as! String)
                                     self.URLDictionary[key] = imageURLString
                                     print("URLdict key, value created = \(key), \(imageURLString)")
@@ -360,19 +274,19 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
                                     
                                     
                                 }
-                                CoreDataStackManager.sharedInstance.saveContext()
+                                //CoreDataStackManager.sharedInstance.saveContext()
                                 //print("URLdict after core data store  = \(self.URLDictionary)")
 
                                 //CHECK FOR ERROR
                             
-                            }
-                        } else {
-                            print("No Users")
-                        }
-                    } catch let error as NSError {
+                            //}
+                        //} else {
+                        //    print("No Users")
+                        //}
+                    //} catch let error as NSError {
                         // failure
-                        print("Fetch failed: \(error.localizedDescription)")
-                    }
+                      //  print("Fetch failed: \(error.localizedDescription)")
+                    //}
                     
                 } catch {
                     // NEVER CALLED?
@@ -382,7 +296,6 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
             } catch let error {
                 completionHandler(inner: {throw error})
             }
-            //print("URLdict created = \(self.URLDictionary)")
             completionHandler(inner: {true})
         }
         task.resume()

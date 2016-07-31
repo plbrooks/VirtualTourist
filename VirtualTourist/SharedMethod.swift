@@ -16,7 +16,7 @@ class SharedMethod {
     static let  errorMessage                    =   SharedServices.sharedInstance.errorMessage
     static let  getPageNumberFlickr             =   SharedNetworkServices.sharedInstance.getPageFromFlickr
     static let  presentingVC                    =   SharedServices.sharedInstance.presentingVC
-    //static let  usingPath                       =   SharedServices.sharedInstance.usingPath
+    static let  imageCache                      =   ImageCache.sharedInstance
     static let  showAlert                       =   SharedServices.sharedInstance.showAlert
     
 }
