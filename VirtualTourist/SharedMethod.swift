@@ -12,11 +12,10 @@ class SharedMethod {
      * Shared instance constants used to improve readability in methods                                     *
      ********************************************************************************************************/
     
-    static let  applicationDocumentsDirectory    = CoreDataStackManager.sharedInstance.applicationDocumentsDirectory
     static let  errorMessage                    =   SharedServices.sharedInstance.errorMessage
-    static let  getPageNumberFlickr             =   SharedNetworkServices.sharedInstance.getPageFromFlickr
     static let  presentingVC                    =   SharedServices.sharedInstance.presentingVC
     static let  imageCache                      =   ImageCache.sharedInstance
     static let  showAlert                       =   SharedServices.sharedInstance.showAlert
+    static let  sharedContext                   =   CoreDataStackManager.sharedInstance.managedObjectContext
     
 }

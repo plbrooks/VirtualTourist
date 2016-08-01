@@ -14,41 +14,54 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
 
     
     @IBOutlet weak var mapView: MKMapView!
-      
     
+    var selectedPin: Pin!
     
-    var pin: Pin?
+    lazy var photoFetchedResultsController: NSFetchedResultsController = {
+        let request = NSFetchRequest(entityName: "Photo")
+        request.sortDescriptors = []
+        request.predicate = NSPredicate(format: "pin == %@",self.selectedPin)
+        let fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: SharedMethod.sharedContext,sectionNameKeyPath: nil,cacheName: nil)
+        return fetchedResultsController
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         mapView.delegate = self
-        print("photo album pin = \(pin)")
-        setMap(pin!)       // set up the map view of the selected annotation
+        do {
+            try photoFetchedResultsController.performFetch()
+            //let fetchedObjects = photoFetchedResultsController.fetchedObjects
+        } catch let error as NSError {
+            // failure
+            print("Fetch failed: \(error.localizedDescription)")
+        }
+        photoFetchedResultsController.delegate = self
+        setMap(selectedPin!)       // set up the map view of the selected annotation
         //photoList
     }
     
+    func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
+        let a = photoFetchedResultsController.sections?.count ?? 0
+        print("number of sections = \(a)")
+        return photoFetchedResultsController.sections?.count ?? 0
+    }
     
     // tell the collection view how many cells to make
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         // number of photos in photoList
-        print("count = \(SharedNetworkServices.sharedInstance.URLDictionary.keys.count)")
-        return SharedNetworkServices.sharedInstance.URLDictionary.keys.count
+        print("photo count = \(photoFetchedResultsController.sections![section].numberOfObjects)")
+        return photoFetchedResultsController.sections![section].numberOfObjects
     }
     
     // make a cell for each cell index path
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+        let photo = photoFetchedResultsController.objectAtIndexPath(indexPath) as! Photo
         
         // get a reference to our storyboard cell
         let reuseID = "photoCell"
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseID, forIndexPath: indexPath) as! PhotoCollectionViewCell
-        
-        // Use the outlet in our custom class to get a reference to the UILabel in the cell
-        //cell.myLabel.text = self.items[indexPath.item]
-        //print("I am in collectionview")
-        //cell.PhotoCollectionViewCellImage = nil
         cell.backgroundColor = UIColor.whiteColor() // make cell more visible in our example project
-        //cell.image.image = AlbumPhoto
-        
+        cell.image.image = UIImage(data: photo.imageData)
         return cell
     }
     
@@ -61,7 +74,7 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
         // add the one annotation to the map view
         let myAnnotation = MKPointAnnotation()
         
-        let location = CLLocationCoordinate2D(latitude: pin!.latitude as Double, longitude:pin!.longitude as Double)
+        let location = CLLocationCoordinate2D(latitude: selectedPin!.latitude as Double, longitude:selectedPin!.longitude as Double)
         
         myAnnotation.coordinate = location
         self.mapView.addAnnotation(myAnnotation)

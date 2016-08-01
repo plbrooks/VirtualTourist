@@ -13,10 +13,6 @@ class Constants: NSObject {
     static let databaseName = "VirtualTourist.sqlite"
     static let maxNumOfPhotos = 21
     
-    static let documentsDirectoryURL: NSURL = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first!
-    static let fileURL: NSURL = documentsDirectoryURL.URLByAppendingPathComponent("VirtualTourist")
-
-    
     struct modelURL {
         static let name = "Model"
         static let ext = "momd"
