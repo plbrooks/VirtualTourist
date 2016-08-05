@@ -216,19 +216,24 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
                     let photosContainer = parsedResult["photos"] as? NSDictionary
                     let photosDictionary = photosContainer!["photo"] as? [[String: AnyObject]]
                     let URLCount = min(Constants.maxNumOfPhotos,photosDictionary!.count)
-                    //print("URL count = \(URLCount)")
-                                for _ in 1...URLCount {
-                                    let randomPhotoIndex = Int(arc4random_uniform(UInt32(photosDictionary!.count)))
-                                    let randomPhoto = photosDictionary![randomPhotoIndex]
-                                    /* GUARD: Does our photo have a key for 'url_m'? */
-                                    guard let imageURLString = randomPhoto["url_m"] as? String else {
-                                        print("Cannot find key 'url_m' in \(randomPhoto)")
-                                        return
-                                    }
-                                    let key = (randomPhoto["server"] as! String) + (randomPhoto["id"] as! String)
-                                    self.URLDictionary[key] = imageURLString
-                                    // CHECK EACH ITEM IS NOT NIL
-                                }
+                    switch URLCount {
+                    case 0:
+                        completionHandler(inner: {true})    // no photos that is OK
+                    default:
+                        
+                        for _ in 1...URLCount {
+                            let randomPhotoIndex = Int(arc4random_uniform(UInt32(photosDictionary!.count)))
+                            let randomPhoto = photosDictionary![randomPhotoIndex]
+                            /* GUARD: Does our photo have a key for 'url_m'? */
+                            guard let imageURLString = randomPhoto["url_m"] as? String else {
+                                print("Cannot find key 'url_m' in \(randomPhoto)")
+                                return
+                            }
+                            let key = (randomPhoto["server"] as! String) + (randomPhoto["id"] as! String)
+                            self.URLDictionary[key] = imageURLString
+                            // CHECK EACH ITEM IS NOT NIL
+                        }
+                    }
                     print("dictionary count = \(self.URLDictionary.count)")
                 } catch {
                     // NEVER CALLED?

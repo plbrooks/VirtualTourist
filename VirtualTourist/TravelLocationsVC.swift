@@ -14,13 +14,13 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
     
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-    @IBOutlet weak var tapPinsToDeleteButton: UIButton!
     @IBOutlet weak var editButton: UIBarButtonItem!
+    @IBOutlet weak var tapPinsLabel: UILabel!
+    
     
     @IBOutlet weak var mapViewTop: NSLayoutConstraint!
     @IBOutlet weak var mapViewBottom: NSLayoutConstraint!
-    @IBOutlet weak var tapPinsToDeleteButtonBottom: NSLayoutConstraint!
-    
+        
     var mapViewTopStartPosition: CGFloat = 0
     var mapViewBottomStartPosition: CGFloat = 0
     
@@ -59,8 +59,7 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
             editButton.title = "Edit"
             self.mapViewTop.constant = self.mapViewTopStartPosition
             self.mapViewBottom.constant = self.mapViewBottomStartPosition
-            tapPinsToDeleteButtonBottom.constant = tapPinsToDeleteButton.frame.height   // set just outside view
-            tapPinsToDeleteButton.hidden = true
+            tapPinsLabel.hidden = true
             
         activityIndicator.startAnimating()
     }
@@ -75,21 +74,19 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
             
             self.view.layoutIfNeeded()
             UIView.animateWithDuration(0.5, delay: 0.0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
-                self.mapViewTop.constant -= self.tapPinsToDeleteButton.frame.height
-                self.mapViewBottom.constant -= self.tapPinsToDeleteButton.frame.height
-                self.tapPinsToDeleteButton.hidden = true
-                self.tapPinsToDeleteButtonBottom.constant -= self.tapPinsToDeleteButton.frame.height
+                self.mapViewTop.constant -= self.tapPinsLabel.frame.height
+                self.mapViewBottom.constant -= self.tapPinsLabel.frame.height
+                self.tapPinsLabel.hidden = true
                 self.view.layoutIfNeeded()
                 }, completion: nil)
 
-            tapPinsToDeleteButton.hidden = false
+            tapPinsLabel.hidden = false
         
         case "Done":
             editButton.title = "Edit"
             self.mapViewTop.constant = self.mapViewTopStartPosition
             self.mapViewBottom.constant = self.mapViewBottomStartPosition
-            tapPinsToDeleteButtonBottom.constant = tapPinsToDeleteButton.frame.height   // set just outside view
-            tapPinsToDeleteButton.hidden = true
+                        tapPinsLabel.hidden = true
         
         default:
             print("error")
@@ -98,49 +95,37 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
     /********************************************************************************************************
      * Let the FetchedResultsController handle showing annotations                                          *
      ********************************************************************************************************/
-    func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
+    /*func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
         
         let pin = anObject as! Pin
+        print("pin in did change object = \(pin.latitude), \(pin.longitude)")
         let coordinate = CLLocationCoordinate2D(latitude: pin.latitude as Double, longitude: pin.longitude as Double)
         switch type {
-            
         case .Insert:
-                var annotations = [MKPointAnnotation]()
-                let annotation = MKPointAnnotation()
-                annotation.coordinate = coordinate
-                annotations.append(annotation)
-                mapView.addAnnotations(annotations)
-                break
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = coordinate
+            mapView.addAnnotation(annotation)
             
-            case .Delete:
-                var annotations = [MKPointAnnotation]()
-                let annotation = MKPointAnnotation()
-                annotation.coordinate = coordinate
-                annotations.append(annotation)
-                mapView.removeAnnotations(annotations)
-                break
-                
-            default:
-                return
+        //case .Delete:
+            /*let annotation = MKPointAnnotation()
+            annotation.coordinate = coordinate
+            
+            print("annotation to remove = \(annotation.coordinate.latitude), \(annotation.coordinate.longitude) ")
+            mapView.removeAnnotation(annotation)*/
+            
+            
+            
+        default:
+            return
         }
-    }
+    }*/
     
-    
-    
-    /********************************************************************************************************
-     * Process the "Delete" button                                                                          *
-     ********************************************************************************************************/
-    @IBAction func deletePins(sender: AnyObject) {
-        
-        
-        editButton.title = "Done"
-    }
     
     /********************************************************************************************************
      * Add a pin after a long touch                                                                         *
      ********************************************************************************************************/
-    @IBAction func handleLongPressGesture(sender: AnyObject) {
-        if sender.state == UIGestureRecognizerState.Began {
+    func handleLongPressGesture(sender: AnyObject) {
+        if sender.state == UIGestureRecognizerState.Began && editButton.title == "Edit" {
             let touchLocation = sender.locationInView(mapView)
             let coordinate = mapView.convertPoint(touchLocation, toCoordinateFromView: mapView)
             let dictionary: [String : AnyObject] = [
@@ -153,12 +138,10 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
             selectedPin = Pin(dictionary: dictionary, context: SharedMethod.sharedContext)
             CoreDataStackManager.sharedInstance.saveContext()
             
-            // could add annotation here but use frc
-            //var annotations = [MKPointAnnotation]()
-            //let annotation = MKPointAnnotation()
-            //annotation.coordinate = coordinate
-            //annotations.append(annotation)
-            //mapView.addAnnotations(annotations)
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = coordinate
+            mapView.addAnnotation(annotation)
+            
             
             // start to add photos
             
@@ -178,15 +161,39 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
      ********************************************************************************************************/
     func mapView(mapView: MKMapView,
         didSelectAnnotationView view: MKAnnotationView) {
-        let controller = self.storyboard!.instantiateViewControllerWithIdentifier("PhotoAlbumVC")
-            as! PhotoAlbumVC
-        selectedLocation = view.annotation!.coordinate
         
-        if let pin = getPinFromCoordinate(selectedLocation!, frc: self.onePinFetchedResultsController) {
-            controller.selectedPin = pin
-        }
-        self.navigationController!.pushViewController(controller, animated: true)
+        selectedLocation = view.annotation!.coordinate
+        print("selected location = \(selectedLocation)")
+        
+        switch editButton.title! {
+        
+        case "Edit":
+            let controller = self.storyboard!.instantiateViewControllerWithIdentifier("PhotoAlbumVC")
+                as! PhotoAlbumVC
+            if let pin = getPinFromCoordinate(selectedLocation!, frc: self.onePinFetchedResultsController) {
+                controller.selectedPin = pin
+            }
+            self.navigationController!.pushViewController(controller, animated: true)
+            break
+            
+        case "Done":    // case: "Done"
+            if let pin = getPinFromCoordinate(selectedLocation!, frc: self.onePinFetchedResultsController) {
+                print("pin to delete from Core Data = \(pin.latitude), \(pin.longitude)")
+                SharedMethod.sharedContext.deleteObject(pin)
+                CoreDataStackManager.sharedInstance.saveContext()
+                
+                mapView.removeAnnotation(view.annotation!)
 
+                
+                
+                break
+            }
+        default:
+            return
+        
+        }
+        
+        
     }
     /********************************************************************************************************
      * Return the pin of a location. Complicated because don't want to == a Double as precision may be off  *
@@ -259,6 +266,25 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
         activityIndicator.stopAnimating()
         activityIndicator.hidden = true
     }
+    
+    /********************************************************************************************************
+     * Dequeue deleted pins                                                                                 *
+     ********************************************************************************************************/
+    func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
+        
+        var pinOnMap = mapView.dequeueReusableAnnotationViewWithIdentifier("PinOnMap") as? MKPinAnnotationView
+        
+        if pinOnMap == nil {
+            pinOnMap = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "MapPin")
+        }
+        else {
+            pinOnMap!.annotation = annotation
+        }
+        
+        return pinOnMap
+    }
+    
+    
     
 }
 
