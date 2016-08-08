@@ -29,6 +29,8 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
     override func viewDidLoad() {
         super.viewDidLoad()
         mapView.delegate = self
+        self.collectionView.delegate = self;
+        self.collectionView.dataSource = self;
         do {
             try photoFetchedResultsController.performFetch()
             //let fetchedObjects = photoFetchedResultsController.fetchedObjects
@@ -41,17 +43,18 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
         //photoList
     }
     
-    override func viewWillLayoutSubviews() {
+    override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         let layout : UICollectionViewFlowLayout = UICollectionViewFlowLayout()
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        let space: CGFloat = 7
+        let space: CGFloat = 5
+        layout.sectionInset = UIEdgeInsets(top: 0, left: space, bottom: 0, right: space)
         layout.minimumLineSpacing = space
         layout.minimumInteritemSpacing = space
         //let width = floor(self.collectionView.frame.size.width/3 - 2*space)
         //print("viewDidLayoutSubviews frame size width = \(self.collectionView.frame.size.width), cell width = \(width)")
         //layout.itemSize = CGSize(width: width, height: width)
-        layout.invalidateLayout()
+        //layout.invalidateLayout()
+        collectionView.backgroundColor = UIColor.whiteColor()
         collectionView.collectionViewLayout = layout
     }
     
@@ -69,13 +72,16 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
     // make a cell for each cell index path
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let photo = photoFetchedResultsController.objectAtIndexPath(indexPath) as! Photo
-        
         // get a reference to our storyboard cell
         let reuseID = "photoCell"
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseID, forIndexPath: indexPath) as! PhotoCollectionViewCell
-        cell.backgroundColor = UIColor.greenColor() // make cell more visible in our example project
+        cell.backgroundColor = UIColor.whiteColor() // make cell more visible in our example project
+        //cell.image.contentMode = .ScaleAspectFill
+        
         cell.image.image = UIImage(data: photo.imageData)
-        //print("cellforitematindexpath framewidth = \(self.view.frame.size.width), cell width = \(cell.frame.width)")
+        
+        //print("cellforitematindexpath framewidth = \(self.view.frame.width), cell  width = \(cell.frame.width)")
+        //print("cellforitematindexpath cellframeheight = \(cell.frame.height), image  height = \(cell.image.frame.height)")
         cell.contentView.layoutIfNeeded()
         cell.contentView.layoutSubviews()
         return cell
@@ -84,8 +90,9 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
         let numberOfCellsPerRow: CGFloat = 3.0
-        let space:CGFloat = 7.0
-        let cellwidth: CGFloat = self.view.frame.size.width/numberOfCellsPerRow - space*(numberOfCellsPerRow*2)
+        let space:CGFloat = 5.0
+        let numberOfPaddingColumns: CGFloat = 5
+        let cellwidth: CGFloat = (self.view.frame.size.width - space*numberOfPaddingColumns) / numberOfCellsPerRow
         //print("sizeforitematindexpath  framesizewidth = \(width), cell width = \(cellwidth)")
         return CGSizeMake(cellwidth, cellwidth)
     }
@@ -94,11 +101,56 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
         //let leftRightInset = self.view.frame.size.width / 14.0
         //return UIEdgeInsetsMake(0, leftRightInset, 0, leftRightInset)
     }*/
-  
+    
+    /*func collectionView(tableView: UICollectionView,
+                            commitEditingStyle editingStyle: UITableViewCellEditingStyle,
+                                               forRowAtIndexPath indexPath: NSIndexPath) {
+        
+        switch (editingStyle) {
+        case .Delete:
+            
+            // Here we get the actor, then delete it from core data
+            let photo = photoFetchedResultsController.objectAtIndexPath(indexPath) as! Photo
+            SharedMethod.sharedContext.deleteObject(photo)
+            CoreDataStackManager.sharedInstance.saveContext()
+            
+        default:
+            break
+        }
+    }*/
+    
+    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        let photo = photoFetchedResultsController.objectAtIndexPath(indexPath) as! Photo
+        let cell = collectionView.cellForItemAtIndexPath(indexPath)
+        cell!.opaque = true // make cell more visible in our example project
+        SharedMethod.sharedContext.deleteObject(photo)
+        CoreDataStackManager.sharedInstance.saveContext()
+    }
+    
+    // MARK: - Fetched Results Controller Delegate
+    
+    // Step 4: This would be a great place to add the delegate methods
+    //func controllerWillChangeContent(controller: NSFetchedResultsController) {
+    //    self.tableView.beginUpdates()
+    //}
     
     
-    
-    
+    //
+    // This is the most interesting method. Take particular note of way the that newIndexPath
+    // parameter gets unwrapped and put into an array literal: [newIndexPath!]
+    //
+    func controller(controller: NSFetchedResultsController,
+                    didChangeObject anObject: AnyObject,
+                                    atIndexPath indexPath: NSIndexPath?,
+                                                forChangeType type: NSFetchedResultsChangeType,
+                                                              newIndexPath: NSIndexPath?) {
+        
+        switch type {
+        case .Delete:
+            collectionView.deleteItemsAtIndexPaths([indexPath!])
+        default: return
+        }
+    }
     
     @IBAction func addNewCollection(sender: AnyObject) {
     }
@@ -119,6 +171,24 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
         self.mapView.setRegion(region, animated: true)  // show the map
     }
     
+    /********************************************************************************************************
+     * When the map starts renders show the activity indicator                                              *
+     ********************************************************************************************************/
+    func mapViewDidStarthRenderingMap(mapView: MKMapView, fullyRendered: Bool) {
+        mapView.alpha = 0.25
+        //activityIndicator.startAnimating()
+        //activityIndicator.hidden = false
+    }
     
+    
+    /********************************************************************************************************
+     * Once the map finishes rendering stop the activity indicator                                           *
+     ********************************************************************************************************/
+    func mapViewDidFinishRenderingMap(mapView: MKMapView, fullyRendered: Bool) {
+        mapView.alpha = 1.0
+        //activityIndicator.stopAnimating()
+        //activityIndicator.hidden = true
+    }
+
     
 }

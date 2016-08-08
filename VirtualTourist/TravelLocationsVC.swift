@@ -17,8 +17,7 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
     @IBOutlet weak var editButton: UIBarButtonItem!
     @IBOutlet weak var tapPinsLabel: UILabel!
     
-    
-    @IBOutlet weak var mapViewTop: NSLayoutConstraint!
+   // @IBOutlet weak var mapViewTop: NSLayoutConstraint!
     @IBOutlet weak var mapViewBottom: NSLayoutConstraint!
         
     var mapViewTopStartPosition: CGFloat = 0
@@ -48,7 +47,7 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
     override func viewDidLoad() {
         super.viewDidLoad()
         mapView.delegate = self
-        mapViewTopStartPosition = mapViewTop.constant       // store initial value of the mapView top margin constraint
+        //mapViewTopStartPosition = mapViewTop.constant       // store initial value of the mapView top margin constraint
         mapViewBottomStartPosition = mapViewBottom.constant // store initial value of the mapView bottom margin constraint
         getPins()
     }
@@ -57,8 +56,8 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
         super.viewWillAppear(animated)
         
             editButton.title = "Edit"
-            self.mapViewTop.constant = self.mapViewTopStartPosition
-            self.mapViewBottom.constant = self.mapViewBottomStartPosition
+            //mapViewTop.constant = self.mapViewTopStartPosition
+            mapViewBottom.constant = self.mapViewBottomStartPosition
             tapPinsLabel.hidden = true
             
         activityIndicator.startAnimating()
@@ -74,7 +73,7 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
             
             self.view.layoutIfNeeded()
             UIView.animateWithDuration(0.5, delay: 0.0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
-                self.mapViewTop.constant -= self.tapPinsLabel.frame.height
+                //self.mapViewTop.constant -= self.tapPinsLabel.frame.height
                 self.mapViewBottom.constant -= self.tapPinsLabel.frame.height
                 self.tapPinsLabel.hidden = true
                 self.view.layoutIfNeeded()
@@ -84,7 +83,7 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
         
         case "Done":
             editButton.title = "Edit"
-            self.mapViewTop.constant = self.mapViewTopStartPosition
+            //self.mapViewTop.constant = self.mapViewTopStartPosition
             self.mapViewBottom.constant = self.mapViewBottomStartPosition
                         tapPinsLabel.hidden = true
         
@@ -173,7 +172,9 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
             if let pin = getPinFromCoordinate(selectedLocation!, frc: self.onePinFetchedResultsController) {
                 controller.selectedPin = pin
             }
+            print("calling photoalbumVC")
             self.navigationController!.pushViewController(controller, animated: true)
+            mapView.deselectAnnotation(view.annotation, animated: false)
             break
             
         case "Done":    // case: "Done"
@@ -181,11 +182,7 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
                 print("pin to delete from Core Data = \(pin.latitude), \(pin.longitude)")
                 SharedMethod.sharedContext.deleteObject(pin)
                 CoreDataStackManager.sharedInstance.saveContext()
-                
                 mapView.removeAnnotation(view.annotation!)
-
-                
-                
                 break
             }
         default:
