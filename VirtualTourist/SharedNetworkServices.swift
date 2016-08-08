@@ -30,13 +30,16 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
         
         getPageFromFlickr(Constants.maxNumOfPhotos, pin: pin) {(inner2: () throws -> Bool) -> Void in
             do {
+                print("try inner2")
                 try inner2() // if successful continue else catch the error code
                 self.getURLsFromFlickrPage(self.randomPageNumber, pin: pin) {(inner3: () throws -> Bool) -> Void in
                     do {
                         //print("after get URLs from FlickrPage")
+                        print("try inner3")
                         try inner3() // if successful continue else catch the error code
                         self.storePhotos(pin) {(inner4: () throws -> Bool) -> Void in
                             do {
+                                print("try inner4")
                                 try inner4() // if successful continue else catch the error code
                                 // NUMBER OF PHOTOS
                                 completionHandler(inner: {true})
@@ -125,6 +128,7 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
     /* Store photos*/
     
     func storePhotos(pin: Pin, completionHandler: (inner: () throws -> Bool) -> Void) {
+        print("in storePhotos")
         let session = NSURLSession.sharedSession()
         for (key, photoURL) in URLDictionary {
             let URLString = NSURL(string: photoURL)
@@ -142,7 +146,6 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
                         ]
                         let _ = Photo(dictionary: dictionary, context: SharedMethod.sharedContext)
                     }
-                    CoreDataStackManager.sharedInstance.saveContext()
                 } catch let error as NSError {
                     Status.codeIs.flickrError(type: "saving Photos", code: error.code, text: error.localizedDescription)
                     completionHandler(inner: {throw error})
@@ -150,6 +153,9 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
             }
             task.resume()
         }
+        CoreDataStackManager.sharedInstance.saveContext()
+        print("in storePhotos after saveContext")
+        completionHandler(inner: {true})
     }
 
     //struct Cache {

@@ -17,6 +17,7 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
     @IBOutlet weak var collectionView: UICollectionView!
     
     var selectedPin: Pin!
+    var numberOfFetchedObjects = 0
     
     lazy var photoFetchedResultsController: NSFetchedResultsController = {
         let request = NSFetchRequest(entityName: "Photo")
@@ -31,9 +32,11 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
         mapView.delegate = self
         self.collectionView.delegate = self;
         self.collectionView.dataSource = self;
+        numberOfFetchedObjects = 0
         do {
             try photoFetchedResultsController.performFetch()
-            //let fetchedObjects = photoFetchedResultsController.fetchedObjects
+            numberOfFetchedObjects = (photoFetchedResultsController.fetchedObjects?.count)!
+            print("viewDidLoad # of fetched objects = \(numberOfFetchedObjects)")
         } catch let error as NSError {
             // failure
             print("Fetch failed: \(error.localizedDescription)")
@@ -45,17 +48,20 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        let layout : UICollectionViewFlowLayout = UICollectionViewFlowLayout()
-        let space: CGFloat = 5
-        layout.sectionInset = UIEdgeInsets(top: 0, left: space, bottom: 0, right: space)
-        layout.minimumLineSpacing = space
-        layout.minimumInteritemSpacing = space
-        //let width = floor(self.collectionView.frame.size.width/3 - 2*space)
-        //print("viewDidLayoutSubviews frame size width = \(self.collectionView.frame.size.width), cell width = \(width)")
-        //layout.itemSize = CGSize(width: width, height: width)
-        //layout.invalidateLayout()
-        collectionView.backgroundColor = UIColor.whiteColor()
-        collectionView.collectionViewLayout = layout
+        if (numberOfFetchedObjects > 0) {
+            let layout : UICollectionViewFlowLayout = UICollectionViewFlowLayout()
+            let space: CGFloat = 5
+            layout.sectionInset = UIEdgeInsets(top: 0, left: space, bottom: 0, right: space)
+            layout.minimumLineSpacing = space
+            layout.minimumInteritemSpacing = space
+            //let width = floor(self.collectionView.frame.size.width/3 - 2*space)
+            //print("viewDidLayoutSubviews frame size width = \(self.collectionView.frame.size.width), cell width = \(width)")
+            //layout.itemSize = CGSize(width: width, height: width)
+            //layout.invalidateLayout()
+            print("setting collectionview")
+            collectionView.backgroundColor = UIColor.whiteColor()
+            collectionView.collectionViewLayout = layout
+        }
     }
     
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
@@ -155,7 +161,6 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
     @IBAction func addNewCollection(sender: AnyObject) {
     }
 
-    
     func setMap(center: Pin) {
         // add the one annotation to the map view
         let myAnnotation = MKPointAnnotation()
@@ -171,24 +176,5 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
         self.mapView.setRegion(region, animated: true)  // show the map
     }
     
-    /********************************************************************************************************
-     * When the map starts renders show the activity indicator                                              *
-     ********************************************************************************************************/
-    func mapViewDidStarthRenderingMap(mapView: MKMapView, fullyRendered: Bool) {
-        mapView.alpha = 0.25
-        //activityIndicator.startAnimating()
-        //activityIndicator.hidden = false
-    }
-    
-    
-    /********************************************************************************************************
-     * Once the map finishes rendering stop the activity indicator                                           *
-     ********************************************************************************************************/
-    func mapViewDidFinishRenderingMap(mapView: MKMapView, fullyRendered: Bool) {
-        mapView.alpha = 1.0
-        //activityIndicator.stopAnimating()
-        //activityIndicator.hidden = true
-    }
-
     
 }
