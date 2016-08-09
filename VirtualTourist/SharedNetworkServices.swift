@@ -14,21 +14,15 @@ import CoreData
 class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
     static let sharedInstance = SharedNetworkServices()    // set up shared instance class
     private override init() {}                              // ensure noone will init
-    
-    /*public let FGSingleton = FGSingletonClass()
-
-    public class FGSingletonClass {
-    private init() {}*/
-
     var randomPageNumber = 0
     var URLDictionary = [String: String]()
-    //var photosDownloadIsInProcess: Bool?
+    //var photosDownloadIsInProcess = false
     
     func savePhotos(maxNumOfPhotos:Int, pin: Pin, completionHandler: (inner: () throws -> Bool) -> Void) {
+                
         randomPageNumber = 0
         URLDictionary = [:]
-        //photosDownloadIsInProcess = true
-        //print("at top photosDownloadIsInProcess = \(photosDownloadIsInProcess)")
+        GlobalVar.sharedInstance.photosDownloadIsInProcess = true
         getPageFromFlickr(Constants.maxNumOfPhotos, pin: pin) {(inner2: () throws -> Bool) -> Void in
             do {
                 print("try inner2")
@@ -57,8 +51,6 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
             }
         completionHandler(inner: {true})
         }
-    //photosDownloadIsInProcess = false
-    //print("at bottom photosDownloadIsInProcess = \(photosDownloadIsInProcess)")
     }
 
     func checkForFlickrErrors(data: NSData?, response: NSURLResponse?, error: NSError?) throws -> Void {
@@ -157,8 +149,7 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
             task.resume()
         }
         CoreDataStackManager.sharedInstance.saveContext()
-        NSNotificationCenter.defaultCenter().postNotificationName(Constants.notificationKey, object: self)
-        print("in storePhotos after saveContext")
+        GlobalVar.sharedInstance.photosDownloadIsInProcess = false
         completionHandler(inner: {true})
     }
 

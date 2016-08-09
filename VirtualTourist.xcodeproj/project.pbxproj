@@ -28,6 +28,7 @@
 		D052C8FA1C653BF8002C9DB5 /* SharedMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = D052C8F91C653BF8002C9DB5 /* SharedMethod.swift */; };
 		D052C8FD1C66AC4D002C9DB5 /* PhotoAlbumVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = D052C8FC1C66AC4D002C9DB5 /* PhotoAlbumVC.swift */; };
 		D075E9CA1D567E170048648B /* downloading.png in Resources */ = {isa = PBXBuildFile; fileRef = D075E9C91D567E170048648B /* downloading.png */; };
+		D075E9CE1D5A40210048648B /* GlobalVar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D075E9CD1D5A40210048648B /* GlobalVar.swift */; };
 		D0F7953F1D333AE6008CD91B /* PhotoCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F7953E1D333AE6008CD91B /* PhotoCollectionViewCell.swift */; };
 /* End PBXBuildFile section */
 
@@ -76,6 +77,7 @@
 		D052C8F91C653BF8002C9DB5 /* SharedMethod.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharedMethod.swift; sourceTree = "<group>"; };
 		D052C8FC1C66AC4D002C9DB5 /* PhotoAlbumVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoAlbumVC.swift; sourceTree = "<group>"; };
 		D075E9C91D567E170048648B /* downloading.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = downloading.png; sourceTree = "<group>"; };
+		D075E9CD1D5A40210048648B /* GlobalVar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalVar.swift; sourceTree = "<group>"; };
 		D0F7953E1D333AE6008CD91B /* PhotoCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoCollectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -175,6 +177,7 @@
 		D052C8F21C64F9B9002C9DB5 /* SharedServices */ = {
 			isa = PBXGroup;
 			children = (
+				D075E9CD1D5A40210048648B /* GlobalVar.swift */,
 				D02A7A1E1C6120AB00510439 /* ImageCache.swift */,
 				D03D8E371C68244E00B6ADE6 /* SharedNetworkServices.swift */,
 				D052C8F91C653BF8002C9DB5 /* SharedMethod.swift */,
@@ -348,6 +351,7 @@
 				D02A7A151C60FEC800510439 /* CoreDataStackManager.swift in Sources */,
 				D03D8E381C68244E00B6ADE6 /* SharedNetworkServices.swift in Sources */,
 				D01905D21C62A13E007B4E2B /* Pin.swift in Sources */,
+				D075E9CE1D5A40210048648B /* GlobalVar.swift in Sources */,
 				D052C8F81C653A7F002C9DB5 /* SharedServices.swift in Sources */,
 				D02A7A181C60FF6D00510439 /* Model.xcdatamodeld in Sources */,
 			);

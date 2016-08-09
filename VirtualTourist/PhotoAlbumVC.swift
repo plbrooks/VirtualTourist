@@ -17,12 +17,12 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
     @IBOutlet weak var collectionView: UICollectionView!
     
     var selectedPin: Pin!
-    var photosDownloadIsInProcess: Bool = false     // set in SharedMethod
+    //var photosDownloadIsInProcess: Bool = false     // set in SharedMethod
     var numberOfFetchedObjects = 0
     
     var insertedIndexPaths: [NSIndexPath]!
-    var deletedIndexPaths: [NSIndexPath]!
-    var updatedIndexPaths: [NSIndexPath]!
+    var deletedIndexPaths:  [NSIndexPath]!
+    var updatedIndexPaths:  [NSIndexPath]!
     
     lazy var photoFetchedResultsController: NSFetchedResultsController = {
         let request = NSFetchRequest(entityName: "Photo")
@@ -41,10 +41,35 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
         self.collectionView.dataSource = self;
         photoFetchedResultsController.delegate = self
         numberOfFetchedObjects = 0
+        do {
+            try photoFetchedResultsController.performFetch()
+            let numberOfFetchedObjects = (photoFetchedResultsController.fetchedObjects?.count)!
+            print("numberOfFetchedObjects = \(numberOfFetchedObjects)")
+            /*if numberOfFetchedObjects == 0 && photosDownloadIsInProcess == true {    // either no photos or not ready
+             NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(fetchPhotos), name: Constants.notificationKey, object: nil)
+             NSNotificationCenter.defaultCenter().removeObserver(self)
+             photosDownloadIsInProcess = false
+             }*/
+            print("viewWillLoadLayoutSubviews # of fetched objects = \(numberOfFetchedObjects)")
+        } catch let error as NSError {
+            // failure
+            print("Fetch failed: \(error.localizedDescription)")
+        }
+
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
+            if selectedPin.photos.isEmpty &&  GlobalVar.sharedInstance.photosDownloadIsInProcess == false {
+                        SharedNetworkServices.sharedInstance.savePhotos(Constants.maxNumOfPhotos, pin: selectedPin!) {(inner: () throws -> Bool) -> Void in
+                do {
+                    //print("in test inner")
+                    try inner() // if successful continue else catch the error code
+                } catch let error {
+                    SharedMethod.showAlert(error, title: "Error", viewController: self)
+                }
+            }
+        }
         //let timer = NSTimer.scheduledTimerWithTimeInterval(60.0, target: self, selector: #selector(self.reloadData), userInfo: nil, repeats: true)
        //self.collectionView.reloadData()
        //print("reload data")
@@ -54,7 +79,7 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
        self.collectionView.reloadData()
     }*/
     
-    override func viewWillLayoutSubviews() {
+    /*override func viewWillLayoutSubviews() {
         do {
             try photoFetchedResultsController.performFetch()
             let numberOfFetchedObjects = (photoFetchedResultsController.fetchedObjects?.count)!
@@ -70,7 +95,7 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
             print("Fetch failed: \(error.localizedDescription)")
         }
 
-    }
+    }*/
     
     func fetchPhotos() {
         do {
