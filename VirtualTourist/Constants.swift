@@ -12,6 +12,7 @@ class Constants: NSObject {
     
     static let databaseName = "VirtualTourist.sqlite"
     static let maxNumOfPhotos = 21
+    static let notificationKey = "PhotoCount"
     
     struct modelURL {
         static let name = "Model"

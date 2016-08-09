@@ -30,7 +30,7 @@ class Photo : NSManagedObject {
     
     // 3. We are promoting these four from simple properties, to Core Data attributes
      @NSManaged var key: String
-     @NSManaged var imageData: NSData
+     @NSManaged var imageData: NSData?
      @NSManaged var pin: Pin
      //@NSManaged var pin: NSManagedObject
     
@@ -57,7 +57,9 @@ class Photo : NSManagedObject {
         key = dictionary[Keys.Key] as! String
         //let image = dictionary[Keys.Image] as! UIImage
         //imageData = UIImagePNGRepresentation(image!)!
-        imageData = dictionary[Keys.ImageData] as! NSData
+        if dictionary[Keys.ImageData] != nil {
+            imageData = dictionary[Keys.ImageData] as? NSData
+        }
         pin = dictionary[Keys.Pin] as! Pin
         
     }

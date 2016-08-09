@@ -17,7 +17,12 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
     @IBOutlet weak var collectionView: UICollectionView!
     
     var selectedPin: Pin!
+    var photosDownloadIsInProcess: Bool = false     // set in SharedMethod
     var numberOfFetchedObjects = 0
+    
+    var insertedIndexPaths: [NSIndexPath]!
+    var deletedIndexPaths: [NSIndexPath]!
+    var updatedIndexPaths: [NSIndexPath]!
     
     lazy var photoFetchedResultsController: NSFetchedResultsController = {
         let request = NSFetchRequest(entityName: "Photo")
@@ -28,22 +33,54 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
     }()
     
     override func viewDidLoad() {
+        print("inviewdidLoad")
         super.viewDidLoad()
         mapView.delegate = self
+        setMap(selectedPin!)       // set up the map view of the selected annotation
         self.collectionView.delegate = self;
         self.collectionView.dataSource = self;
+        photoFetchedResultsController.delegate = self
         numberOfFetchedObjects = 0
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        //let timer = NSTimer.scheduledTimerWithTimeInterval(60.0, target: self, selector: #selector(self.reloadData), userInfo: nil, repeats: true)
+       //self.collectionView.reloadData()
+       //print("reload data")
+    }
+    
+    /*func reloadData() {
+       self.collectionView.reloadData()
+    }*/
+    
+    override func viewWillLayoutSubviews() {
         do {
             try photoFetchedResultsController.performFetch()
-            numberOfFetchedObjects = (photoFetchedResultsController.fetchedObjects?.count)!
-            print("viewDidLoad # of fetched objects = \(numberOfFetchedObjects)")
+            let numberOfFetchedObjects = (photoFetchedResultsController.fetchedObjects?.count)!
+            print("numberOfFetchedObjects = \(numberOfFetchedObjects), photosDownloadIsInProcess = \(photosDownloadIsInProcess)")
+            /*if numberOfFetchedObjects == 0 && photosDownloadIsInProcess == true {    // either no photos or not ready
+                 NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(fetchPhotos), name: Constants.notificationKey, object: nil)
+                NSNotificationCenter.defaultCenter().removeObserver(self)
+                photosDownloadIsInProcess = false
+            }*/
+            print("viewWillLoadLayoutSubviews # of fetched objects = \(numberOfFetchedObjects)")
         } catch let error as NSError {
             // failure
             print("Fetch failed: \(error.localizedDescription)")
         }
-        photoFetchedResultsController.delegate = self
-        setMap(selectedPin!)       // set up the map view of the selected annotation
-        //photoList
+
+    }
+    
+    func fetchPhotos() {
+        do {
+            try photoFetchedResultsController.performFetch()
+            let numberOfFetchedObjects = (photoFetchedResultsController.fetchedObjects?.count)!
+            print("fetchPhotos # of fetched objects = \(numberOfFetchedObjects)")
+        } catch let error as NSError {
+            // failure
+            print("Fetch failed: \(error.localizedDescription)")
+        }
     }
     
     override func viewDidLayoutSubviews() {
@@ -83,8 +120,10 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseID, forIndexPath: indexPath) as! PhotoCollectionViewCell
         cell.backgroundColor = UIColor.whiteColor() // make cell more visible in our example project
         //cell.image.contentMode = .ScaleAspectFill
-        
-        cell.image.image = UIImage(data: photo.imageData)
+       
+        if photo.imageData != nil {
+            cell.image.image = UIImage(data: photo.imageData!)
+        }
         
         //print("cellforitematindexpath framewidth = \(self.view.frame.width), cell  width = \(cell.frame.width)")
         //print("cellforitematindexpath cellframeheight = \(cell.frame.height), image  height = \(cell.image.frame.height)")
@@ -140,23 +179,60 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
     //    self.tableView.beginUpdates()
     //}
     
+  // inspired by https://discussions.udacity.com/t/integrating-a-collectionview-with-coredata/182241/2
     
-    //
-    // This is the most interesting method. Take particular note of way the that newIndexPath
-    // parameter gets unwrapped and put into an array literal: [newIndexPath!]
-    //
+    
+    func controllerWillChangeContent(controller: NSFetchedResultsController) {
+        insertedIndexPaths = [NSIndexPath]()
+        deletedIndexPaths = [NSIndexPath]()
+        updatedIndexPaths = [NSIndexPath]()
+    }
+    
     func controller(controller: NSFetchedResultsController,
-                    didChangeObject anObject: AnyObject,
-                                    atIndexPath indexPath: NSIndexPath?,
-                                                forChangeType type: NSFetchedResultsChangeType,
-                                                              newIndexPath: NSIndexPath?) {
+                    didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?,
+                                    forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
         
-        switch type {
+        switch type{
+            
+        case .Insert:
+            insertedIndexPaths.append(newIndexPath!)
+            break
+            
         case .Delete:
-            collectionView.deleteItemsAtIndexPaths([indexPath!])
-        default: return
+            deletedIndexPaths.append(indexPath!)
+            
+            let photo = anObject as! Photo
+            SharedMethod.sharedContext.deleteObject(photo)
+            break
+            
+        case .Update:
+            updatedIndexPaths.append(indexPath!)
+            break
+            
+        default:
+            break
         }
     }
+    
+    func controllerDidChangeContent(controller: NSFetchedResultsController) {
+        
+        collectionView.performBatchUpdates({() -> Void in
+            
+            for indexPath in self.insertedIndexPaths {
+                self.collectionView.insertItemsAtIndexPaths([indexPath])
+            }
+            
+            for indexPath in self.deletedIndexPaths {
+                self.collectionView.deleteItemsAtIndexPaths([indexPath])
+            }
+            
+            for indexPath in self.updatedIndexPaths {
+                self.collectionView.reloadItemsAtIndexPaths([indexPath])
+            }
+            
+            }, completion: nil)
+    }
+    
     
     @IBAction func addNewCollection(sender: AnyObject) {
     }

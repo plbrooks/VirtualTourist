@@ -22,12 +22,13 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
 
     var randomPageNumber = 0
     var URLDictionary = [String: String]()
+    //var photosDownloadIsInProcess: Bool?
     
     func savePhotos(maxNumOfPhotos:Int, pin: Pin, completionHandler: (inner: () throws -> Bool) -> Void) {
-        
         randomPageNumber = 0
         URLDictionary = [:]
-        
+        //photosDownloadIsInProcess = true
+        //print("at top photosDownloadIsInProcess = \(photosDownloadIsInProcess)")
         getPageFromFlickr(Constants.maxNumOfPhotos, pin: pin) {(inner2: () throws -> Bool) -> Void in
             do {
                 print("try inner2")
@@ -56,7 +57,9 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
             }
         completionHandler(inner: {true})
         }
-}
+    //photosDownloadIsInProcess = false
+    //print("at bottom photosDownloadIsInProcess = \(photosDownloadIsInProcess)")
+    }
 
     func checkForFlickrErrors(data: NSData?, response: NSURLResponse?, error: NSError?) throws -> Void {
         guard (error == nil)  else {    // was there an error returned?
@@ -154,6 +157,7 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
             task.resume()
         }
         CoreDataStackManager.sharedInstance.saveContext()
+        NSNotificationCenter.defaultCenter().postNotificationName(Constants.notificationKey, object: self)
         print("in storePhotos after saveContext")
         completionHandler(inner: {true})
     }

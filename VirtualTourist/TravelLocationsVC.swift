@@ -143,7 +143,7 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
             
             
             // start to add photos
-            
+
             SharedNetworkServices.sharedInstance.savePhotos(Constants.maxNumOfPhotos, pin: selectedPin!) {(inner: () throws -> Bool) -> Void in
                 do {
                     //print("in test inner")
@@ -260,7 +260,7 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
      ********************************************************************************************************/
     func mapViewDidFinishRenderingMap(mapView: MKMapView, fullyRendered: Bool) {
         mapView.alpha = 1.0
-        activityIndicator.stopAnimating()
+        activityIndicator.stopAnimating() 
         activityIndicator.hidden = true
     }
     

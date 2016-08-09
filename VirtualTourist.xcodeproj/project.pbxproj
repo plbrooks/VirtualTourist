@@ -176,10 +176,10 @@
 			isa = PBXGroup;
 			children = (
 				D02A7A1E1C6120AB00510439 /* ImageCache.swift */,
+				D03D8E371C68244E00B6ADE6 /* SharedNetworkServices.swift */,
 				D052C8F91C653BF8002C9DB5 /* SharedMethod.swift */,
 				D052C8EF1C64F97B002C9DB5 /* Constants.swift */,
 				D052C8F41C650111002C9DB5 /* Status.swift */,
-				D03D8E371C68244E00B6ADE6 /* SharedNetworkServices.swift */,
 				D052C8F71C653A7F002C9DB5 /* SharedServices.swift */,
 			);
 			name = SharedServices;
