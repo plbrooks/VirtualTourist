@@ -25,16 +25,14 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
         GlobalVar.sharedInstance.photosDownloadIsInProcess = true
         getPageFromFlickr(Constants.maxNumOfPhotos, pin: pin) {(inner2: () throws -> Bool) -> Void in
             do {
-                print("try inner2")
+                
                 try inner2() // if successful continue else catch the error code
                 self.getURLsFromFlickrPage(self.randomPageNumber, pin: pin) {(inner3: () throws -> Bool) -> Void in
                     do {
-                        //print("after get URLs from FlickrPage")
-                        print("try inner3")
+                        
                         try inner3() // if successful continue else catch the error code
                         self.storePhotos(pin) {(inner4: () throws -> Bool) -> Void in
                             do {
-                                print("try inner4")
                                 try inner4() // if successful continue else catch the error code
                                 // NUMBER OF PHOTOS
                                 completionHandler(inner: {true})
@@ -120,10 +118,10 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
         }
     }
 
-    /* Store photos*/
+    
+    // MARK: Storage phons for a pin
     
     func storePhotos(pin: Pin, completionHandler: (inner: () throws -> Bool) -> Void) {
-        print("in storePhotos")
         let session = NSURLSession.sharedSession()
         for (key, photoURL) in URLDictionary {
             let URLString = NSURL(string: photoURL)

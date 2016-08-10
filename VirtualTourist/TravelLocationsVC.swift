@@ -60,8 +60,12 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
         mapViewBottom.constant = self.mapViewBottomStartPosition
         tapPinsLabel.hidden = true                              // hide the "Tap Pins to Delete" label
         
-        if let pinError = getPins() { //get pins to populate map. If no data returned it is all good. If data is returned data is the NSError
-            SharedMethod.showAlert(Status.codeIs.pinErrorWithCode(code: pinError.code,text: pinError.localizedDescription), title: "Error", viewController: self)
+        do {
+            
+            try getPins() //get pins to populate map. If no data returned it is all good.
+        
+        } catch let error as NSError {
+            SharedMethod.showAlert(Status.codeIs.fetchError(error: error), title: "Error", viewController: self)
         }
     }
     
@@ -128,7 +132,8 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
         
         selectedLocation = view.annotation!.coordinate
         
-        if let pin = getPinFromCoordinate(selectedLocation!, frc: self.onePinFetchedResultsController) {
+        do {
+           let pin = try getPinFromCoordinate(selectedLocation!, frc: self.onePinFetchedResultsController)
         
             switch editButton.title! {
             
@@ -141,23 +146,25 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
                 break
             
             default:    // case: "Done"  - delete the pin
-                SharedMethod.sharedContext.deleteObject(pin)
+                SharedMethod.sharedContext.deleteObject(pin!)
                 CoreDataStackManager.sharedInstance.saveContext()
                 mapView.removeAnnotation(view.annotation!)
                 break
             }
-        } else {
-            SharedMethod.showAlert(Status.codeIs.pinError, title: "Error", viewController: self)
+            
+        } catch let error as NSError {
+            SharedMethod.showAlert(Status.codeIs.fetchError(error: error), title: "Error", viewController: self)
         }
     }
     
     
     // MARK: Get all pins on the map
     
-    func getPins() -> NSError? {
+    func getPins() throws {
         
         do {
             try self.allPinsFetchedResultsController.performFetch()
+            
             let fetchedObjects = allPinsFetchedResultsController.fetchedObjects
             if fetchedObjects!.count > 0 {
                 var annotations = [MKPointAnnotation]()
@@ -169,16 +176,16 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
                 }
                 mapView.addAnnotations(annotations)
             }
+            
         } catch let error as NSError {
-            return error
+            throw error
         }
-        return nil
     }
     
     
     // MARK: Return the pin of a location.
     
-    func getPinFromCoordinate(coordinate: CLLocationCoordinate2D, frc: NSFetchedResultsController) -> Pin? {
+    func getPinFromCoordinate(coordinate: CLLocationCoordinate2D, frc: NSFetchedResultsController) throws -> Pin? {
         // Saving and retrieving of coordinates can mismatch due to double precision processing (e.g. may drop least significant decimal digit)
         // Use a bounding approach to get the pin using a map coordinate
         
@@ -196,9 +203,10 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
                     return pin
                 }
             }   // if here, pin count != 1 so pin not set, nil is returned
+        
         } catch let error as NSError {
             // failure
-            print("Fetch failed: \(error.localizedDescription)")
+            throw error
         }
         return nil
     }
