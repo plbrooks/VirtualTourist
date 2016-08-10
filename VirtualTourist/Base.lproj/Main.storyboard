@@ -161,7 +161,7 @@
                                         </constraints>
                                         <state key="normal" title="New Collection"/>
                                         <connections>
-                                            <action selector="addNewCollection:" destination="8GU-Qz-h1h" eventType="touchUpInside" id="jCf-oW-KiQ"/>
+                                            <action selector="addNewCollection:" destination="8GU-Qz-h1h" eventType="touchUpInside" id="FTi-z6-F7M"/>
                                         </connections>
                                     </button>
                                 </subviews>
