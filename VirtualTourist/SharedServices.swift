@@ -47,9 +47,6 @@ class SharedServices: NSObject {
             errMessage = substituteKeyInString(Status.textIs.flickrError, key: "TYPE", value: String(type))!
             errMessage = substituteKeyInString(errMessage, key: "STATUSCODE", value: String(code))!
             errMessage = substituteKeyInString(errMessage, key: "TEXT", value: text)!
-        case Status.codeIs.fetchError(let error):
-            errMessage = substituteKeyInString(Status.textIs.fetchError, key: "STATUSCODE", value: String(error.code))!
-            errMessage = substituteKeyInString(Status.textIs.fetchError, key: "TEXT", value: error.localizedDescription)!
         default:    // no error
             errMessage = Status.textIs.noError
         }
