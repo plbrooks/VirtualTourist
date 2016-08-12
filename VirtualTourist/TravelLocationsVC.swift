@@ -31,7 +31,9 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
     var selectedPin: Pin?
     
     
-    // MARK: Lazy frc's. Use two frcs rather than change predicates in code
+    // MARK: Lazy fetched results controllers
+    
+    // Use two frcs rather than change predicates in code
     
     lazy var allPinsFetchedResultsController: NSFetchedResultsController = {
         let request = NSFetchRequest(entityName: "Pin")
@@ -51,7 +53,7 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
     }()
     
     
-    // MARK: Init override functions
+    // MARK: Init functions
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -60,14 +62,18 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
         mapViewBottom.constant = self.mapViewBottomStartPosition
         tapPinsLabel.hidden = true                              // hide the "Tap Pins to Delete" label
         
-        if let pinError = getPins() { //get pins to populate map. If no data returned it is all good. If data is returned data is the NSError
-            SharedMethod.showAlert(Status.codeIs.pinErrorWithCode(code: pinError.code,text: pinError.localizedDescription), title: "Error", viewController: self)
+        do {
+            try getPins()   // get pins to populate map. If no data returned it is all good. If data is returned data is the NSError
+            return          // all good
+        } catch {
+            SharedMethod.showAlert(error, title: "Error", viewController: self)
         }
     }
     
+    // MARK: UI Processing functions
     
-    // MARK: Process the "Edit / Done" button - change the map view and show the button at the bottom of the view
-    
+    // Process the "Edit / Done" button - change the map view and show the button at the bottom of the view
+
     @IBAction func edit(sender: AnyObject) {
         
         switch editButton.title! {
@@ -91,7 +97,7 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
     }
     
     
-    // MARK:  Add a pin after a long touch   
+    // Add a pin after a long touch
     
     func handleLongPressGesture(sender: AnyObject) {
         
@@ -113,7 +119,7 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
             SharedNetworkServices.sharedInstance.savePhotos(Constants.maxNumOfPhotos, pin: selectedPin!) {(inner: () throws -> Bool) -> Void in
                 do {
                     try inner() // if successful continue else catch the error code
-                } catch let error {
+                } catch {
                     SharedMethod.showAlert(error, title: "Error", viewController: self)
                 }
             }
@@ -121,40 +127,41 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
     }
    
     
-    // MARK: didSelectAnnovationView: A pin has been selected. Either delete the pin or go to the PhotoAlbumVC
+    // A pin has been selected. Either delete the pin or go to the PhotoAlbumVC
     
     func mapView(mapView: MKMapView,
         didSelectAnnotationView view: MKAnnotationView) {
         
         selectedLocation = view.annotation!.coordinate
         
-        if let pin = getPinFromCoordinate(selectedLocation!, frc: self.onePinFetchedResultsController) {
-        
-            switch editButton.title! {
-            
-            case "Edit":    // got to PhotoAlbumVC
-                let controller = self.storyboard!.instantiateViewControllerWithIdentifier("PhotoAlbumVC")
-                    as! PhotoAlbumVC
-                controller.selectedPin = pin
-                self.navigationController!.pushViewController(controller, animated: true)
-                mapView.deselectAnnotation(view.annotation, animated: false)
-                break
-            
-            default:    // case: "Done"  - delete the pin
-                SharedMethod.sharedContext.deleteObject(pin)
-                CoreDataStackManager.sharedInstance.saveContext()
-                mapView.removeAnnotation(view.annotation!)
-                break
-            }
-        } else {
-            SharedMethod.showAlert(Status.codeIs.pinError, title: "Error", viewController: self)
+        do {
+            let pin = try getPinFromCoordinate(selectedLocation!, frc: self.onePinFetchedResultsController)
+                switch editButton.title! {
+                case "Edit":    // got to PhotoAlbumVC
+                    let controller = self.storyboard!.instantiateViewControllerWithIdentifier("PhotoAlbumVC")
+                        as! PhotoAlbumVC
+                    controller.selectedPin = pin
+                    self.navigationController!.pushViewController(controller, animated: true)
+                    mapView.deselectAnnotation(view.annotation, animated: false)
+                    break
+                default:    // case: "Done"  - delete the pin
+                    SharedMethod.sharedContext.deleteObject(pin!)
+                    CoreDataStackManager.sharedInstance.saveContext()
+                    mapView.removeAnnotation(view.annotation!)
+                    break
+                }
+        } catch Status.codeIs.pinNotFound {
+            SharedMethod.showAlert(Status.codeIs.pinNotFound, title: "Error", viewController: self)
+        } catch {
+            SharedMethod.showAlert(error, title: "Error", viewController: self)
         }
     }
     
+    // MARK: Core Data fetched results controller functions
     
-    // MARK: Get all pins on the map
-    
-    func getPins() -> NSError? {
+    // Get all pins on the map
+
+    func getPins() throws {
         
         do {
             try self.allPinsFetchedResultsController.performFetch()
@@ -170,55 +177,62 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
                 mapView.addAnnotations(annotations)
             }
         } catch let error as NSError {
-            return error
+            throw Status.codeIs.nserror(type: Status.ErrorTypeIs.pinError , error: error)
         }
-        return nil
+    
     }
     
     
-    // MARK: Return the pin of a location.
+    // Return the pin of a location.
     
-    func getPinFromCoordinate(coordinate: CLLocationCoordinate2D, frc: NSFetchedResultsController) -> Pin? {
+    func getPinFromCoordinate(coordinate: CLLocationCoordinate2D, frc: NSFetchedResultsController) throws -> Pin? {
         // Saving and retrieving of coordinates can mismatch due to double precision processing (e.g. may drop least significant decimal digit)
         // Use a bounding approach to get the pin using a map coordinate
-        
         // Approach inspired by: http://stackoverflow.com/questions/2026649/nspredicate-dont-work-with-double-values-f
+        
         let epsilon:Double = DBL_EPSILON
         let firstPredicate = NSPredicate(format: "latitude <= %lf and latitude => %lf",coordinate.latitude as Double + epsilon, coordinate.latitude as Double - epsilon)
         let secondPredicate = NSPredicate(format: "longitude <= %lf and longitude => %lf",coordinate.longitude as Double + epsilon, coordinate.longitude as Double - epsilon)
         let predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [firstPredicate, secondPredicate])
         onePinFetchedResultsController.fetchRequest.predicate = predicate
         
-        do {                                            // fetch the pin
+        do {            // fetch the pin
             try frc.performFetch()
             if (frc.fetchedObjects!.count == 1) {
                 for pin in frc.fetchedObjects as! [Pin] {
                     return pin
                 }
-            }   // if here, pin count != 1 so pin not set, nil is returned
+            } else {    // if here, pin count != 1 so pin not set, error
+                throw Status.codeIs.pinNotFound
+            }
         } catch let error as NSError {
-            // failure
-            print("Fetch failed: \(error.localizedDescription)")
+            throw Status.codeIs.nserror(type: Status.ErrorTypeIs.pinError , error: error)
         }
         return nil
+    
     }
   
     
     // MARK: Map functions
     
     func mapViewDidStarthRenderingMap(mapView: MKMapView, fullyRendered: Bool) {
+        
         mapView.alpha = 0.25
         activityIndicator.startAnimating()
         activityIndicator.hidden = false
+    
     }
 
     func mapViewDidFinishRenderingMap(mapView: MKMapView, fullyRendered: Bool) {
+        
         mapView.alpha = 1.0
         activityIndicator.stopAnimating() 
         activityIndicator.hidden = true
+    
     }
     
     func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
+        
         var pinOnMap = mapView.dequeueReusableAnnotationViewWithIdentifier("PinOnMap") as? MKPinAnnotationView
         if pinOnMap == nil {
             pinOnMap = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "MapPin")

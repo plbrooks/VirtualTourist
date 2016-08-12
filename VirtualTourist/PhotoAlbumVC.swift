@@ -56,25 +56,37 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
 
     }
     
+    
+    // Start downloading photos for the pin if no photos exist and there is no download in process
+    
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        // if no photos for pin AND there is no download in process then there are truly no photos for the pin so try again
-        // ino photos for pin AND there IS a download in process, don't try to download again. (Just wait for download to complete)
+        
+        // If no photos for pin AND there is no download in process then there are truly no photos for the pin in Core Data
+        //      so try again
+        // If no photos for pin AND there IS a download in process, don't try to download again. 
+        //      (Just continue and download will complete)
         if selectedPin.photos.isEmpty &&  GlobalVar.sharedInstance.photosDownloadIsInProcess == false {
             
             SharedNetworkServices.sharedInstance.savePhotos(Constants.maxNumOfPhotos, pin: selectedPin!) {(inner: () throws -> Bool) -> Void in
+                
                 do {
                     try inner() // if successful continue else catch the error code
                 } catch let error {
                     SharedMethod.showAlert(error, title: "Error", viewController: self)
                 }
+                
             }
+            
         }
     }
     
+    
+    // Set up collection layout parameters
+    
     override func viewDidLayoutSubviews() {
+        
         super.viewDidLayoutSubviews()
-        // set up collection layout parameters
         let layout : UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         let space: CGFloat = 5
         layout.sectionInset = UIEdgeInsets(top: 0, left: space, bottom: 0, right: space)
@@ -89,8 +101,26 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
     
     @IBAction func addNewCollection(sender: UIButton) {
     
-    // TBD
-    
+        let photosToGo = photoFetchedResultsController.fetchedObjects
+        
+        for photoToDelete in photosToGo! {
+            let photo = photoToDelete as! Photo
+            SharedMethod.sharedContext.deleteObject(photo)
+        }
+        
+        CoreDataStackManager.sharedInstance.saveContext()
+        
+        // add new photos
+        SharedNetworkServices.sharedInstance.savePhotos(Constants.maxNumOfPhotos, pin: selectedPin!) {(inner: () throws -> Bool) -> Void in
+            
+            do {
+                try inner() // if successful continue else catch the error code
+                //self.collectionView.reloadData()
+            } catch {
+                SharedMethod.showAlert(error, title: "Error", viewController: self)
+            }
+            
+        }
     }
     
     
@@ -109,7 +139,7 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
         let reuseID = "photoCell"
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseID, forIndexPath: indexPath) as! PhotoCollectionViewCell
         cell.backgroundColor = UIColor.whiteColor() // make cell more visible
-        if photo.imageData != nil {             // if nil, the default image in the storyboard will be shown
+        if photo.imageData != nil {                 // if nil, the default image in the storyboard will be shown
             cell.image.image = UIImage(data: photo.imageData!)
         }
         cell.contentView.layoutIfNeeded()
@@ -117,6 +147,8 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
         return cell
     }
   
+    
+    // Set collection view flowlayout parameters
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
         let numberOfCellsPerRow: CGFloat = 3.0
@@ -127,10 +159,12 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
     }
     
     
+    // Delete the cell if it is selected
+    
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         let photo = photoFetchedResultsController.objectAtIndexPath(indexPath) as! Photo
         let cell = collectionView.cellForItemAtIndexPath(indexPath)
-        cell!.opaque = true // make cell more visible in our example project
+        cell!.opaque = true
         SharedMethod.sharedContext.deleteObject(photo)
         CoreDataStackManager.sharedInstance.saveContext()
     }
@@ -138,11 +172,18 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
     // MARK: - Fetched Results Controller Delegate funcs
     // inspired by https://discussions.udacity.com/t/integrating-a-collectionview-with-coredata/182241/2
     
+    
+    // Create indexPath arrays
+    
     func controllerWillChangeContent(controller: NSFetchedResultsController) {
         insertedIndexPaths = [NSIndexPath]()
         deletedIndexPaths = [NSIndexPath]()
         updatedIndexPaths = [NSIndexPath]()
     }
+    
+    
+    
+    // Handle changes to the indexPath
     
     func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
         
@@ -168,6 +209,9 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
         }
     }
     
+    
+    // Handle changes to the collection view
+    
     func controllerDidChangeContent(controller: NSFetchedResultsController) {
         
         collectionView.performBatchUpdates({() -> Void in
@@ -188,16 +232,17 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
     }
 
     
-    // MARK: Map func
+    // MARK: Set the map
     
     func setMap(center: Pin) {
-        // add the one annotation to the map view
+        
+        // Add the one annotation to the map view
         let myAnnotation = MKPointAnnotation()
         let location = CLLocationCoordinate2D(latitude: selectedPin!.latitude as Double, longitude:selectedPin!.longitude as Double)
         myAnnotation.coordinate = location
         self.mapView.addAnnotation(myAnnotation)
         
-        // do some map housekeeping - set span, center, etc.
+        // Do some map housekeeping - set span, center, etc.
         let span = MKCoordinateSpanMake(1.0,1.0)                        // set reasonable granularity
         let region = MKCoordinateRegion(center: location , span: span ) // center map
         self.mapView.setRegion(region, animated: true)                  // show the map

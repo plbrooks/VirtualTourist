@@ -6,21 +6,20 @@
 //  Copyright © 2016 Peter Brooks. All rights reserved.
 //
 
+
 import Foundation
 import UIKit
 
 
-/********************************************************************************************************
- * Common general methods used across VCs                                                               *
- ********************************************************************************************************/
+    // MARK: All non-network shared services
+
 class SharedServices: NSObject {
     static let sharedInstance = SharedServices()    // set up shared instance class
     private override init() {}                      // ensure noone will init
 
     
-    /********************************************************************************************************
-    * Find the current VC. Used in classes such as CoreDataStackManager to send Alert to the presenting VC  *
-    ********************************************************************************************************/
+    // Find the current VC. Used in classes such as CoreDataStackManager to send Alert to the pres VC
+    
     func  presentingVC() -> UIViewController? {
         var topController = UIApplication.sharedApplication().keyWindow?.rootViewController
         if topController != nil {
@@ -31,31 +30,54 @@ class SharedServices: NSObject {
     return topController
     }
     
-    /********************************************************************************************************
-    * Convert error codes to error messages. Add in variable text as needed.                               *
-    ********************************************************************************************************/
+    
+    // Convert error codes to error messages. Add in variable text as needed.
+    
     func errorMessage(err: ErrorType) -> String {
+        
         var errMessage = ""
+        
         switch err {
+        
         case Status.codeIs.accessSavedData (let code, let text):
-            errMessage = substituteKeyInString(Status.textIs.accessSavedData, key: "STATUSCODE", value: String(code))!
-            errMessage = substituteKeyInString(errMessage, key: "TEXT", value: text)!
-        case Status.codeIs.saveContext (let code, let text):
-            errMessage = substituteKeyInString(Status.textIs.saveContext, key: "STATUSCODE", value: String(code))!
-            errMessage = substituteKeyInString(errMessage, key: "TEXT", value: text)!
-        case Status.codeIs.flickrError(let type, let code, let text):
-            errMessage = substituteKeyInString(Status.textIs.flickrError, key: "TYPE", value: String(type))!
+            errMessage = Status.textIs.accessSavedData
             errMessage = substituteKeyInString(errMessage, key: "STATUSCODE", value: String(code))!
             errMessage = substituteKeyInString(errMessage, key: "TEXT", value: text)!
+        
+        case Status.codeIs.noFlickrDataReturned:
+            errMessage = Status.textIs.noFlickrDataReturned
+            
+        case Status.codeIs.couldNotParseData:
+            errMessage = Status.textIs.couldNotParseData
+        case Status.codeIs.pinNotFound:
+            errMessage = Status.textIs.pinNotFound
+            
+        case Status.codeIs.flickrStatus(let statusCode):
+            errMessage = Status.textIs.flickrStatus
+            errMessage = substituteKeyInString(errMessage, key: "STATUSCODE", value: String(statusCode))!
+
+        case Status.codeIs.network(let type, let error):
+            errMessage = Status.textIs.network
+            errMessage = substituteKeyInString(errMessage, key: "TYPE", value: type)!
+            errMessage = substituteKeyInString(errMessage, key: "STATUSCODE", value: String(error.code))!
+            errMessage = substituteKeyInString(errMessage, key: "TEXT", value: error.localizedDescription)!
+            
+        case Status.codeIs.nserror(let type, let error):
+            errMessage = Status.textIs.nserror
+            errMessage = substituteKeyInString(errMessage, key: "TYPE", value: type)!
+            errMessage = substituteKeyInString(errMessage, key: "STATUSCODE", value: String(error.code))!
+            errMessage = substituteKeyInString(errMessage, key: "TEXT", value: error.localizedDescription)!
+      
         default:    // no error
             errMessage = Status.textIs.noError
         }
         return errMessage
+    
     }
     
-    /********************************************************************************************************
-     * Update a string STRING by replacing contents KEY that is found in the string with the contents VALUE *
-     ********************************************************************************************************/
+
+    //  Update a string STRING by replacing contents KEY that is found in the string with the contents VALUE
+    
     func substituteKeyInString(string: String, key: String, value: String) -> String? {
         if (string.rangeOfString(key) != nil) {
             return string.stringByReplacingOccurrencesOfString(key, withString: value)
@@ -64,18 +86,20 @@ class SharedServices: NSObject {
         }
     }
     
-    /********************************************************************************************************
-     * Show an alert. Message is from mesasge list in the common "Status" file                           *
-     ********************************************************************************************************/
+    
+    // Show an alert. Message is from mesasge list in the common "Status" file  
+    
     func showAlert (error: ErrorType, title: String, viewController: UIViewController) {
         let message = SharedMethod.errorMessage(error)
         let alertView = UIAlertController(title: title,
             message: message, preferredStyle: .Alert)
         let OKAction = UIAlertAction(title: "OK", style: .Default, handler: nil)
         alertView.addAction(OKAction)
-        dispatch_async(dispatch_get_main_queue(), {
-            viewController.presentViewController(alertView, animated: true, completion: nil)
-        })
+        if viewController.presentedViewController == nil {
+            dispatch_async(dispatch_get_main_queue(), {
+                viewController.presentViewController(alertView, animated: true, completion: nil)
+            })
+        }
     }
 
 
