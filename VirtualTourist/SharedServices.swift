@@ -18,18 +18,6 @@ class SharedServices: NSObject {
     static let sharedInstance = SharedServices()    // set up shared instance class
     private override init() {}                      // ensure noone will init
 
-    // MARK: Find current VC
-    // Used in classes such as CoreDataStackManager to send Alert to the pres VC
-    
-    func  presentingVC() -> UIViewController? {
-        var topController = UIApplication.sharedApplication().keyWindow?.rootViewController
-        if topController != nil {
-            while let presentedViewController = topController!.presentedViewController {
-                topController = presentedViewController
-            }
-        }
-    return topController
-    }
     
     // MARK: Error Processing
     // Convert error codes to error messages. Add in variable text as needed.
@@ -120,6 +108,18 @@ class SharedServices: NSObject {
         }
     }
     
+    // MARK: Find current VC
+    // Used in func ShowAlert to get the present VC
+    
+    func  presentingVC() -> UIViewController? {
+        var topController = UIApplication.sharedApplication().keyWindow?.rootViewController
+        if topController != nil {
+            while let presentedViewController = topController!.presentedViewController {
+                topController = presentedViewController
+            }
+        }
+        return topController
+    }
     
     
 
