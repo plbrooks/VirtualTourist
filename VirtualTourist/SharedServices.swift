@@ -74,7 +74,7 @@ class SharedServices: NSObject {
             return string
         }
     }
-    
+       
     
     // Show an alert. Message is from mesasge list in the common "Status" file  
     
