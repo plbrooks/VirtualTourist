@@ -22,8 +22,10 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
     
     // MARK: Processing funcs
     
-    // Key funcs are: 1. Get a page with photos from flickr.   2. get the URLs from the page, store in a list
-    //            3. Get photos of the URLs and store in Core Data.
+    // Key funcs are: 
+    //   1. Get a page with photos from flickr.
+    //   2. get the URLs from the page, store in a list
+    //   3. Get photos of the URLs and store in Core Data.
     //
     // Error processing is handled in completion handlers that throw either true or the error code
     //
@@ -62,7 +64,7 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
     }
 
     
-        // Get the random page from flickr and store in self.randomPageNumber, that is used in the next called func
+    // Get the random page from flickr and store in self.randomPageNumber, that is used in the next called func
     
     func getPageFromFlickr(maxNumOfPhotos:Int, pin: Pin, completionHandler: (inner: () throws -> Bool) -> Void) {
         
@@ -89,14 +91,15 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
                     completionHandler(inner: { throw throwError})
                     return
                 }
-                
             } catch {
-                completionHandler(inner: { throw error})    // error set in checkForFlickrErrors validation func
+                completionHandler(inner: { throw error}) // error set in checkForFlickrErrors validation func
+                return
             }
-        
+            
+            completionHandler(inner: {true})
         }
         task.resume()
-        completionHandler(inner: {true})
+       
     }
     
     
@@ -134,7 +137,8 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
                             let randomPhoto = photosDictionary![randomPhotoIndex]
                             // Get the URL string
                             guard let imageURLString = randomPhoto["url_m"] as? String else {
-                                print("Cannot find key 'url_m' in \(randomPhoto)")
+                                let throwError = Status.codeIs.couldNotParseData
+                                completionHandler(inner: { throw throwError})
                                 return
                             }
                             // Use SERVER and ID to create a unique key name
@@ -154,7 +158,6 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
             
             completionHandler(inner: {true})    // if here all is OK
         }
-        
         task.resume()
     
     }
@@ -185,12 +188,12 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
                     let throwError = Status.codeIs.nserror(type: Status.ErrorTypeIs.flickr, error: error)
                     completionHandler(inner: { throw throwError})
                 }
+                completionHandler(inner: {true})
+
             }
             task.resume()
         }
         GlobalVar.sharedInstance.photosDownloadIsInProcess = false  // photo download completed
-        completionHandler(inner: {true})
-        
     }
     
     

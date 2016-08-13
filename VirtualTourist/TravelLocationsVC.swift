@@ -67,7 +67,7 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
             try getPins()   // get pins to populate map. If no data returned it is all good. If data is returned data is the NSError
             return          // all good
         } catch {
-            SharedMethod.showAlert(error, title: "Error", viewController: self)
+            SharedMethod.showAlert(error, title: "Error")
         }
     }
     
@@ -81,7 +81,7 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
 
         case "Edit":
             editButton.title = "Done"
-            self.view.layoutIfNeeded()
+            view.layoutIfNeeded()
             tapPinsLabel.hidden = false // show the "Tap Pins to Delete" button
 
             // Move up the map view
@@ -92,7 +92,7 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
             
         default :   // button has to be "Done"
             editButton.title = "Edit"
-            self.mapViewBottom.constant = self.mapViewBottomStartPosition   // reset the map position
+            mapViewBottom.constant = self.mapViewBottomStartPosition   // reset the map position
             tapPinsLabel.hidden = true                                      // hide the "Tap Pins to Delete" button
         }
     }
@@ -100,9 +100,9 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
     
     // Add a pin after a long touch
     
-    func handleLongPressGesture(sender: AnyObject) {
+    func handleLongPressGesture(sender: UILongPressGestureRecognizer) {
         
-        if sender.state == UIGestureRecognizerState.Began && editButton.title == "Edit" {
+        if sender.state == .Began && editButton.title == "Edit" {
             let touchLocation = sender.locationInView(mapView)
             let coordinate = mapView.convertPoint(touchLocation, toCoordinateFromView: mapView)
             let dictionary: [String : AnyObject] = [
@@ -121,7 +121,7 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
                 do {
                     try inner() // if successful continue else catch the error code
                 } catch {
-                    SharedMethod.showAlert(error, title: "Error", viewController: self)
+                    SharedMethod.showAlert(error, title: "Error")
                 }
             }
         }
@@ -136,13 +136,13 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
         selectedLocation = view.annotation!.coordinate
         
         do {
-            let pin = try getPinFromCoordinate(selectedLocation!, frc: self.onePinFetchedResultsController)
+            let pin = try getPinFromCoordinate(selectedLocation!, frc: onePinFetchedResultsController)
                 switch editButton.title! {
                 case "Edit":    // got to PhotoAlbumVC
-                    let controller = self.storyboard!.instantiateViewControllerWithIdentifier("PhotoAlbumVC")
+                    let controller = storyboard!.instantiateViewControllerWithIdentifier("PhotoAlbumVC")
                         as! PhotoAlbumVC
                     controller.selectedPin = pin
-                    self.navigationController!.pushViewController(controller, animated: true)
+                    navigationController!.pushViewController(controller, animated: true)
                     mapView.deselectAnnotation(view.annotation, animated: false)
                     break
                 default:    // case: "Done"  - delete the pin
@@ -152,9 +152,9 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
                     break
                 }
         } catch Status.codeIs.pinNotFound {
-            SharedMethod.showAlert(Status.codeIs.pinNotFound, title: "Error", viewController: self)
+            SharedMethod.showAlert(Status.codeIs.pinNotFound, title: "Error")
         } catch {
-            SharedMethod.showAlert(error, title: "Error", viewController: self)
+            SharedMethod.showAlert(error, title: "Error")
         }
     }
     

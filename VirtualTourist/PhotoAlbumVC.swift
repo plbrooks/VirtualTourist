@@ -33,28 +33,31 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
     // MARK: Lazy frc
     
     lazy var photoFetchedResultsController: NSFetchedResultsController = {
+        
         let request = NSFetchRequest(entityName: "Photo")
         request.sortDescriptors = []
         request.predicate = NSPredicate(format: "pin == %@",self.selectedPin)
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: SharedMethod.sharedContext,sectionNameKeyPath: nil,cacheName: nil)
         return fetchedResultsController
+        
     }()
     
     
      // MARK: Init override functions
     
     override func viewDidLoad() {
+        
         super.viewDidLoad()
         mapView.delegate = self
         setMap(selectedPin!)       // set up the map view of the selected annotation
         SharedMethod.setActivityIndicator("START", mapView: mapView, activityIndicator: activityIndicator)
-        self.collectionView.delegate = self;
-        self.collectionView.dataSource = self;
+        collectionView.delegate = self;
+        collectionView.dataSource = self;
         photoFetchedResultsController.delegate = self
         do {
             try photoFetchedResultsController.performFetch()
         } catch let error as NSError {
-             SharedMethod.showAlert(error, title: "Error", viewController: self)
+             SharedMethod.showAlert(error, title: "Error")
         }
 
     }
@@ -63,6 +66,7 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
     // Start downloading photos for the pin if no photos exist and there is no download in process
     
     override func viewWillAppear(animated: Bool) {
+        
         super.viewWillAppear(animated)
         // If no photos for pin AND there is no download in process then there are truly no photos for the pin in Core Data
         //      so try again
@@ -74,12 +78,11 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
                 do {
                     try inner() // if successful continue else catch the error code
                 } catch let error {
-                    SharedMethod.showAlert(error, title: "Error", viewController: self)
+                    SharedMethod.showAlert(error, title: "Error")
                 }
             }
         }
         newCollection.enabled = true
-
     }
     
     
@@ -98,7 +101,7 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
     }
     
     
-    // MARK: Delete current photos and add new ones
+    // MARK: Refresh photo collection
     
     @IBAction func addNewCollection(sender: UIButton) {
         newCollection.enabled = false
@@ -116,7 +119,7 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
             do {
                 try inner() // if successful continue
             } catch {
-                SharedMethod.showAlert(error, title: "Error", viewController: self)
+                SharedMethod.showAlert(error, title: "Error")
             }
         }
     }
@@ -140,6 +143,7 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
         cell.image.image = UIImage(data: photo.imageData!)
         cell.contentView.layoutIfNeeded()
         cell.contentView.layoutSubviews()
+        newCollection.enabled = true
         return cell
     }
   
@@ -227,9 +231,8 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
             for indexPath in self.updatedIndexPaths {
                 self.collectionView.reloadItemsAtIndexPaths([indexPath])
             }
-            
-            },
-            completion: nil)
+        },
+        completion: nil)
     }
 
     
@@ -241,12 +244,12 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
         let myAnnotation = MKPointAnnotation()
         let location = CLLocationCoordinate2D(latitude: selectedPin!.latitude as Double, longitude:selectedPin!.longitude as Double)
         myAnnotation.coordinate = location
-        self.mapView.addAnnotation(myAnnotation)
+        mapView.addAnnotation(myAnnotation)
         
         // Do some map housekeeping - set span, center, etc.
         let span = MKCoordinateSpanMake(1.0,1.0)                        // set reasonable granularity
         let region = MKCoordinateRegion(center: location , span: span ) // center map
-        self.mapView.setRegion(region, animated: true)                  // show the map
+        mapView.setRegion(region, animated: true)                  // show the map
     }
     
     func mapViewDidStartRenderingMap(mapView: MKMapView, fullyRendered: Bool) {

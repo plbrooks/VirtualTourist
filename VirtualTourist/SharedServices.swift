@@ -90,15 +90,16 @@ class SharedServices: NSObject {
     
     // Show an alert. Message is from mesasge list in the common "Status" file  
     
-    func showAlert (error: ErrorType, title: String, viewController: UIViewController) {
+    func showAlert (error: ErrorType, title: String) {
+        let vc = presentingVC()
         let message = SharedMethod.errorMessage(error)
         let alertView = UIAlertController(title: title,
             message: message, preferredStyle: .Alert)
         let OKAction = UIAlertAction(title: "OK", style: .Default, handler: nil)
         alertView.addAction(OKAction)
-        if viewController.presentedViewController == nil {
+        if vc!.presentedViewController == nil {
             dispatch_async(dispatch_get_main_queue(), {
-                viewController.presentViewController(alertView, animated: true, completion: nil)
+                vc!.presentViewController(alertView, animated: true, completion: nil)
             })
         }
     }
