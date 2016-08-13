@@ -34,7 +34,7 @@ The design has 5 primary folders:
     Status                  - statuses and status text
     SharedNetworkServices   - network (flickr) and related funcs
     SharedServices          - non-network shared services such as presenting message alerts
-    SharedMethod            - list of shared methods generally in SharedNetworkServices and SharedServices. So don't to member where various funcs are
+    SharedMethod            - list of shared methods generally in SharedNetworkServices and SharedServices. So don't need to remember in which classes various funcs are
 
 
 
