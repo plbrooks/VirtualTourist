@@ -59,45 +59,10 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
             }
         completionHandler(inner: {true})
         }
-    
     }
 
     
-    // Store photos in Core Data. Cycle through URLDictionary created in calling fund. For each URL, get the photo and store in Core Data
-    
-    func storePhotos(pin: Pin, completionHandler: (inner: () throws -> Bool) -> Void) {
-        let session = NSURLSession.sharedSession()
-        for (key, photoURL) in URLDictionary {
-            let URLString = NSURL(string: photoURL)
-            let request = NSMutableURLRequest(URL: URLString!)
-            request.HTTPMethod = "GET"
-            let task = session.dataTaskWithRequest(request) { (data,response, error) in
-                do {
-                    try self.checkForFlickrDataReturned(data, response: response, error: error)   // Any Flickr errors?
-                    if let data = data {
-                        // save in DB
-                        let dictionary : [String : AnyObject] = [
-                            Photo.Keys.Key : key as String,
-                            Photo.Keys.ImageData : data as NSData,
-                            Photo.Keys.Pin : pin as Pin
-                        ]
-                        let _ = Photo(dictionary: dictionary, context: SharedMethod.sharedContext)
-                    }
-                } catch let error as NSError {
-                    let throwError = Status.codeIs.nserror(type: Status.ErrorTypeIs.flickr, error: error)
-                    completionHandler(inner: { throw throwError})
-                }
-            }
-            task.resume()
-        }
-        CoreDataStackManager.sharedInstance.saveContext()
-        GlobalVar.sharedInstance.photosDownloadIsInProcess = false  // photo download completed
-        completionHandler(inner: {true})
-    
-    }
-
-    
-    // Get the random page from flickr and store in self.randomPageNumber, that is used in the next called func
+        // Get the random page from flickr and store in self.randomPageNumber, that is used in the next called func
     
     func getPageFromFlickr(maxNumOfPhotos:Int, pin: Pin, completionHandler: (inner: () throws -> Bool) -> Void) {
         
@@ -118,9 +83,7 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
                     let totalPages = (photosDictionary!["pages"] as? Int)!
                     let pageLimit = min(totalPages, 200)        // Pick a random page
                     self.randomPageNumber = Int(arc4random_uniform(UInt32(pageLimit))) + 1
-                    dispatch_async(dispatch_get_main_queue(), {
-                        completionHandler(inner: {true})
-                    })
+                    completionHandler(inner: {true})
                 } catch let error as NSError {
                     let throwError = Status.codeIs.nserror(type: Status.ErrorTypeIs.flickr, error: error)
                     completionHandler(inner: { throw throwError})
@@ -130,9 +93,10 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
             } catch {
                 completionHandler(inner: { throw error})    // error set in checkForFlickrErrors validation func
             }
+        
         }
         task.resume()
-    
+        completionHandler(inner: {true})
     }
     
     
@@ -193,6 +157,40 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
         
         task.resume()
     
+    }
+    
+    
+    // Store photos in Core Data. Cycle through URLDictionary created in calling fund. For each URL, get the photo and store in Core Data
+    
+    func storePhotos(pin: Pin, completionHandler: (inner: () throws -> Bool) -> Void) {
+        let session = NSURLSession.sharedSession()
+        for (key, photoURL) in URLDictionary {
+            let URLString = NSURL(string: photoURL)
+            let request = NSMutableURLRequest(URL: URLString!)
+            request.HTTPMethod = "GET"
+            let task = session.dataTaskWithRequest(request) { (data,response, error) in
+                do {
+                    try self.checkForFlickrDataReturned(data, response: response, error: error)   // Any Flickr errors?
+                    if let data = data {
+                        // save in DB
+                        let dictionary : [String : AnyObject] = [
+                            Photo.Keys.Key : key as String,
+                            Photo.Keys.ImageData : data as NSData,
+                            Photo.Keys.Pin : pin as Pin
+                        ]
+                        let _ = Photo(dictionary: dictionary, context: SharedMethod.sharedContext)
+                    }
+                    CoreDataStackManager.sharedInstance.saveContext()
+                } catch let error as NSError {
+                    let throwError = Status.codeIs.nserror(type: Status.ErrorTypeIs.flickr, error: error)
+                    completionHandler(inner: { throw throwError})
+                }
+            }
+            task.resume()
+        }
+        GlobalVar.sharedInstance.photosDownloadIsInProcess = false  // photo download completed
+        completionHandler(inner: {true})
+        
     }
     
     

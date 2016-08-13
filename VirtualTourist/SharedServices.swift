@@ -9,6 +9,7 @@
 
 import Foundation
 import UIKit
+import MapKit
 
 
     // MARK: All non-network shared services
@@ -17,8 +18,8 @@ class SharedServices: NSObject {
     static let sharedInstance = SharedServices()    // set up shared instance class
     private override init() {}                      // ensure noone will init
 
-    
-    // Find the current VC. Used in classes such as CoreDataStackManager to send Alert to the pres VC
+    // MARK: Find current VC
+    // Used in classes such as CoreDataStackManager to send Alert to the pres VC
     
     func  presentingVC() -> UIViewController? {
         var topController = UIApplication.sharedApplication().keyWindow?.rootViewController
@@ -30,7 +31,7 @@ class SharedServices: NSObject {
     return topController
     }
     
-    
+    // MARK: Error Processing
     // Convert error codes to error messages. Add in variable text as needed.
     
     func errorMessage(err: ErrorType) -> String {
@@ -102,6 +103,23 @@ class SharedServices: NSObject {
         }
     }
 
+    // MARK: Map activity indicator setup
 
+   func setActivityIndicator(option: String, mapView: MKMapView, activityIndicator: UIActivityIndicatorView ) {
+        switch(option) {
+        case "START":
+            mapView.alpha = 0.25
+            activityIndicator.startAnimating()
+            activityIndicator.hidden = false
+        default:    // FINISH
+            mapView.alpha = 1.0
+            activityIndicator.stopAnimating()
+            activityIndicator.hidden = true
+            
+        }
+    }
+    
+    
+    
 
 }

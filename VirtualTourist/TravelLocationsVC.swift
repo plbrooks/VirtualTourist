@@ -60,6 +60,7 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
         mapView.delegate = self
         mapViewBottomStartPosition = mapViewBottom.constant     // store initial value of the mapView bottom margin constraint
         mapViewBottom.constant = self.mapViewBottomStartPosition
+        SharedMethod.setActivityIndicator("START", mapView: mapView, activityIndicator: activityIndicator)
         tapPinsLabel.hidden = true                              // hide the "Tap Pins to Delete" label
         
         do {
@@ -215,21 +216,18 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
     
     // MARK: Map functions
     
-    func mapViewDidStarthRenderingMap(mapView: MKMapView, fullyRendered: Bool) {
+    func mapViewDidStartRenderingMap(mapView: MKMapView, fullyRendered: Bool) {
         
-        mapView.alpha = 0.25
-        activityIndicator.startAnimating()
-        activityIndicator.hidden = false
-    
+        SharedMethod.setActivityIndicator("START", mapView: mapView, activityIndicator: activityIndicator)
+        
     }
-
+    
+    
     func mapViewDidFinishRenderingMap(mapView: MKMapView, fullyRendered: Bool) {
         
-        mapView.alpha = 1.0
-        activityIndicator.stopAnimating() 
-        activityIndicator.hidden = true
-    
+        SharedMethod.setActivityIndicator("FINISH", mapView: mapView, activityIndicator: activityIndicator)
     }
+    
     
     func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
         

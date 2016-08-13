@@ -16,7 +16,9 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
     //  MARK: IBOutlets
     
     @IBOutlet weak var mapView: MKMapView!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var collectionView: UICollectionView!
+    @IBOutlet weak var newCollection: UIButton!
     
     
     //  MARK: Vars
@@ -45,6 +47,7 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
         super.viewDidLoad()
         mapView.delegate = self
         setMap(selectedPin!)       // set up the map view of the selected annotation
+        SharedMethod.setActivityIndicator("START", mapView: mapView, activityIndicator: activityIndicator)
         self.collectionView.delegate = self;
         self.collectionView.dataSource = self;
         photoFetchedResultsController.delegate = self
@@ -61,13 +64,11 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        
         // If no photos for pin AND there is no download in process then there are truly no photos for the pin in Core Data
         //      so try again
         // If no photos for pin AND there IS a download in process, don't try to download again. 
         //      (Just continue and download will complete)
         if selectedPin.photos.isEmpty &&  GlobalVar.sharedInstance.photosDownloadIsInProcess == false {
-            
             SharedNetworkServices.sharedInstance.savePhotos(Constants.maxNumOfPhotos, pin: selectedPin!) {(inner: () throws -> Bool) -> Void in
                 
                 do {
@@ -75,10 +76,10 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
                 } catch let error {
                     SharedMethod.showAlert(error, title: "Error", viewController: self)
                 }
-                
             }
-            
         }
+        newCollection.enabled = true
+
     }
     
     
@@ -100,26 +101,23 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
     // MARK: Delete current photos and add new ones
     
     @IBAction func addNewCollection(sender: UIButton) {
-    
+        newCollection.enabled = false
         let photosToGo = photoFetchedResultsController.fetchedObjects
-        
+    
         for photoToDelete in photosToGo! {
             let photo = photoToDelete as! Photo
             SharedMethod.sharedContext.deleteObject(photo)
         }
-        
         CoreDataStackManager.sharedInstance.saveContext()
-        
+ 
         // add new photos
         SharedNetworkServices.sharedInstance.savePhotos(Constants.maxNumOfPhotos, pin: selectedPin!) {(inner: () throws -> Bool) -> Void in
             
             do {
-                try inner() // if successful continue else catch the error code
-                //self.collectionView.reloadData()
+                try inner() // if successful continue
             } catch {
                 SharedMethod.showAlert(error, title: "Error", viewController: self)
             }
-            
         }
     }
     
@@ -139,9 +137,7 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
         let reuseID = "photoCell"
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseID, forIndexPath: indexPath) as! PhotoCollectionViewCell
         cell.backgroundColor = UIColor.whiteColor() // make cell more visible
-        if photo.imageData != nil {                 // if nil, the default image in the storyboard will be shown
-            cell.image.image = UIImage(data: photo.imageData!)
-        }
+        cell.image.image = UIImage(data: photo.imageData!)
         cell.contentView.layoutIfNeeded()
         cell.contentView.layoutSubviews()
         return cell
@@ -151,22 +147,26 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
     // Set collection view flowlayout parameters
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+        
         let numberOfCellsPerRow: CGFloat = 3.0
         let space:CGFloat = 5.0
         let numberOfPaddingColumns: CGFloat = 5
         let cellwidth: CGFloat = (self.view.frame.size.width - space*numberOfPaddingColumns) / numberOfCellsPerRow
         return CGSizeMake(cellwidth, cellwidth)
+    
     }
     
     
     // Delete the cell if it is selected
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        
         let photo = photoFetchedResultsController.objectAtIndexPath(indexPath) as! Photo
         let cell = collectionView.cellForItemAtIndexPath(indexPath)
         cell!.opaque = true
         SharedMethod.sharedContext.deleteObject(photo)
         CoreDataStackManager.sharedInstance.saveContext()
+    
     }
     
     // MARK: - Fetched Results Controller Delegate funcs
@@ -176,6 +176,7 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
     // Create indexPath arrays
     
     func controllerWillChangeContent(controller: NSFetchedResultsController) {
+        
         insertedIndexPaths = [NSIndexPath]()
         deletedIndexPaths = [NSIndexPath]()
         updatedIndexPaths = [NSIndexPath]()
@@ -186,7 +187,6 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
     // Handle changes to the indexPath
     
     func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
-        
         switch type{
             
         case .Insert:
@@ -228,7 +228,8 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
                 self.collectionView.reloadItemsAtIndexPaths([indexPath])
             }
             
-            }, completion: nil)
+            },
+            completion: nil)
     }
 
     
@@ -248,5 +249,16 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
         self.mapView.setRegion(region, animated: true)                  // show the map
     }
     
+    func mapViewDidStartRenderingMap(mapView: MKMapView, fullyRendered: Bool) {
+        
+        SharedMethod.setActivityIndicator("START", mapView: mapView, activityIndicator: activityIndicator)
+        
+    }
     
+    func mapViewDidFinishRenderingMap(mapView: MKMapView, fullyRendered: Bool) {
+        
+        SharedMethod.setActivityIndicator("FINISH", mapView: mapView, activityIndicator: activityIndicator)
+    }
+    
+ 
 }
