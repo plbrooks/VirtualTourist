@@ -64,7 +64,7 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
     }
 
     
-    // Get the random page from flickr and store in self.randomPageNumber, that is used in the next called func
+    // Get one random page from flickr and store in self.randomPageNumber, that is used in the next called func
     
     func getPageFromFlickr(maxNumOfPhotos:Int, pin: Pin, completionHandler: (inner: () throws -> Bool) -> Void) {
         

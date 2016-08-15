@@ -105,23 +105,25 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
     
     @IBAction func addNewCollection(sender: UIButton) {
         newCollection.enabled = false
-        let photosToGo = photoFetchedResultsController.fetchedObjects
+        /*let photosToGo = photoFetchedResultsController.fetchedObjects
     
         for photoToDelete in photosToGo! {
             let photo = photoToDelete as! Photo
             SharedMethod.sharedContext.deleteObject(photo)
-        }
+        }*/
+        SharedMethod.sharedContext.deleteObject(selectedPin)    // delete pin and all its photos
+        SharedMethod.sharedContext.insertObject(selectedPin)    // insert pin, no photos
         CoreDataStackManager.sharedInstance.saveContext()
  
         // add new photos
-        SharedNetworkServices.sharedInstance.savePhotos(Constants.maxNumOfPhotos, pin: selectedPin!) {(inner: () throws -> Bool) -> Void in
+/*        SharedNetworkServices.sharedInstance.savePhotos(Constants.maxNumOfPhotos, pin: selectedPin!) {(inner: () throws -> Bool) -> Void in
             
             do {
                 try inner() // if successful continue
             } catch {
                 SharedMethod.showAlert(error, title: "Error")
             }
-        }
+        }*/
     }
     
     
