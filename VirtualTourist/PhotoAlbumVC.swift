@@ -73,14 +73,15 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
         // If no photos for pin AND there IS a download in process, don't try to download again. 
         //      (Just continue and download will complete)
         if selectedPin.photos.isEmpty &&  GlobalVar.sharedInstance.photosDownloadIsInProcess == false {
-            SharedNetworkServices.sharedInstance.savePhotos(Constants.maxNumOfPhotos, pin: selectedPin!) {(inner: () throws -> Bool) -> Void in
-                
-                do {
-                    try inner() // if successful continue else catch the error code
-                } catch let error {
+            SharedNetworkServices.sharedInstance.savePhotos(selectedPin!, completionHandler: {(error) in
+                switch error {
+                case Status.codeIs.noError:
+                    break
+                default:
                     SharedMethod.showAlert(error, title: "Error")
+                    break
                 }
-            }
+            })
         }
         newCollection.enabled = true
     }
@@ -142,7 +143,9 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
         let reuseID = "photoCell"
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseID, forIndexPath: indexPath) as! PhotoCollectionViewCell
         cell.backgroundColor = UIColor.whiteColor() // make cell more visible
-        cell.image.image = UIImage(data: photo.imageData!)
+        if (photo.imageData != nil) {
+            cell.image.image = UIImage(data: photo.imageData!)
+        }
         cell.contentView.layoutIfNeeded()
         cell.contentView.layoutSubviews()
         newCollection.enabled = true

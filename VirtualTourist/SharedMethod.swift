@@ -17,5 +17,7 @@ class SharedMethod {
     static let  showAlert                       =   SharedServices.sharedInstance.showAlert
     static let  sharedContext                   =   CoreDataStackManager.sharedInstance.managedObjectContext
     static let  setActivityIndicator            =   SharedServices.sharedInstance.setActivityIndicator
+    static let  saveContext                     =   CoreDataStackManager.sharedInstance.saveContext
+    
     
 }

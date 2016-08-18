@@ -118,13 +118,15 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
             mapView.addAnnotation(annotation)
             
             // start to add photos
-            SharedNetworkServices.sharedInstance.savePhotos(Constants.maxNumOfPhotos, pin: selectedPin!) {(inner: () throws -> Bool) -> Void in
-                do {
-                    try inner() // if successful continue else catch the error code
-                } catch {
+            SharedNetworkServices.sharedInstance.savePhotos(selectedPin!, completionHandler: {(error) in
+                switch error {
+                case Status.codeIs.noError:
+                    break
+                default:
                     SharedMethod.showAlert(error, title: "Error")
+                    break
                 }
-            }
+            })
         }
     }
    

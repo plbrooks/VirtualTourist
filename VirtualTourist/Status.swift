@@ -22,7 +22,8 @@ class Status: NSObject {
         case network                    (type: String, error: NSError)
         case flickrStatus               (statusCode: Int)
         case pinNotFound
-        case pinError                   (error: NSError)
+        //case pinError                   (error: NSError)
+        //case photoError                 (error: NSError)
     }
     
     
@@ -31,7 +32,7 @@ class Status: NSObject {
     struct textIs {
         static let noError                  =   ""
         
-        static let accessSavedData      =   "Oops - error loading or accessing saved data. Status code = STATUSCODE description = TEXT."
+        static let accessSavedData      =   "Oops - error loading or accessing saved data. Status code = STATUSCODE description = TEXT. Database may need to be updated?"
         static let  nserror                 =   "Oops - TYPE. Error code = STATUSCODE description = TEXT."
         static let  noFlickrDataReturned    =   "Oops - No Flickr data returned. Please try again later."
         static let  couldNotParseData       =   "Oops - Flickr data can not be parsed. Please try again later."
@@ -48,7 +49,8 @@ class Status: NSObject {
     struct ErrorTypeIs {
         static let savingPhotos         =   "error saving photos."
         static let flickr               =   "Flickr error."
-        static let pinError             =   "error getting pin(s)."
+        static let pinError             =   "error getting pin(s) from database."
+        static let photoError           =   "error getting photo(s) from database."
         
     }
     
