@@ -30,6 +30,8 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
     var updatedIndexPaths:  [NSIndexPath]!
     
     
+    // MAY NOT NEED
+    
     // MARK: Lazy frc
     
     lazy var photoFetchedResultsController: NSFetchedResultsController = {
@@ -59,7 +61,7 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
         } catch let error as NSError {
              SharedMethod.showAlert(error, title: "Error")
         }
-
+        
     }
     
     
@@ -106,25 +108,28 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
     
     @IBAction func addNewCollection(sender: UIButton) {
         newCollection.enabled = false
-        /*let photosToGo = photoFetchedResultsController.fetchedObjects
-    
-        for photoToDelete in photosToGo! {
-            let photo = photoToDelete as! Photo
+        
+        let photosToDelete = photoFetchedResultsController.fetchedObjects
+        
+        for item in photosToDelete! {   // delete photos
+            let photo = item as! Photo
             SharedMethod.sharedContext.deleteObject(photo)
-        }*/
-        SharedMethod.sharedContext.deleteObject(selectedPin)    // delete pin and all its photos
-        SharedMethod.sharedContext.insertObject(selectedPin)    // insert pin, no photos
+        }
+        
         CoreDataStackManager.sharedInstance.saveContext()
- 
-        // add new photos
-/*        SharedNetworkServices.sharedInstance.savePhotos(Constants.maxNumOfPhotos, pin: selectedPin!) {(inner: () throws -> Bool) -> Void in
-            
-            do {
-                try inner() // if successful continue
-            } catch {
+        
+        // start to add photos
+        SharedNetworkServices.sharedInstance.savePhotos(selectedPin!, completionHandler: {(error) in
+            switch error {
+            case Status.codeIs.noError:
+                break
+            default:
                 SharedMethod.showAlert(error, title: "Error")
+                break
             }
-        }*/
+            self.newCollection.enabled = true
+
+        })
     }
     
     

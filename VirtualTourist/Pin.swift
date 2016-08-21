@@ -27,7 +27,11 @@ class Pin : NSManagedObject {
         super.init(entity: entity,insertIntoManagedObjectContext: context)
         latitude = dictionary[Keys.Latitude] as! NSNumber
         longitude = dictionary[Keys.Longitude] as! NSNumber
-        numOfPages = 1
+        if (dictionary[Keys.numOfPages] == nil) || (dictionary[Keys.numOfPages] as! NSNumber == 0) {
+            numOfPages = 1
+        } else {
+            numOfPages = dictionary[Keys.numOfPages] as! NSNumber
+        }
     
     }
     

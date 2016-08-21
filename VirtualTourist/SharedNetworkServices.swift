@@ -15,41 +15,6 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
     static let sharedInstance = SharedNetworkServices()    // set up shared instance class
     private override init() {}                              // ensure no one will init
     
-    
-    // view did load   photoFetchedResultsController.delegate = self ?
-   
-    // MARK: Vars
-    
-    //var randomPageNumber = 0
-    //var URLDictionary = [String: String]()
-
-       // MARK: Lazy frc
-    /*var selectedPin: Pin?
-    lazy var photoFetchedResultsController: NSFetchedResultsController = {
-        
-        let request = NSFetchRequest(entityName: "Photo")
-        request.sortDescriptors = []
-        request.predicate = NSPredicate(format: "pin == %@",self.selectedPin!)
-        let fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: SharedMethod.sharedContext,sectionNameKeyPath: nil,cacheName: nil)
-        return fetchedResultsController
-        
-    }()*/
-    
-
-    
-    
-    // MARK: Processing funcs
-    
-    // Key funcs are: 
-    //   1. Get a page with photos from flickr.
-    //   2. get the URLs from the page, store in a list
-    //   3. Get photos of the URLs and store in Core Data.
-    //
-    // Error processing is handled in completion handlers that throw either true or the error code
-    //
-    // A var GlobalVar.sharedInstance.photosDownloadIsInProcess is set here, used by PhotoAlbumVC to determine
-    //      if pin has no photos because it has no photos or if pin has no photos because photos are being downloaded
-    //      and not yet available in Core Data
 
     func savePhotos(pin: Pin, completionHandler:(status: ErrorType) -> Void)  {
 
@@ -74,7 +39,7 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
                     let parsedResult: AnyObject!  = try NSJSONSerialization.JSONObjectWithData(data!, options: .AllowFragments)
                     do {
                         
-                        let totalPages = try self.checkForParseErrors(parsedResult)
+                        let totalPages = try self.getTotalPagesAvail(parsedResult)
                         pin.numOfPages = totalPages
                         do {
                             
@@ -111,12 +76,6 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
                 completionHandler(status:error)
             }
             
-            // WHY CALLED
-            
-            /*if (error != nil) {
-                completionHandler(status:Status.codeIs.nserror(type: "NSURLSession", error: error!))
-            }*/
-            
         }   // end of let task
         task.resume()
         
@@ -126,9 +85,7 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
         
         let photosContainer = parsedResult["photos"] as? NSDictionary
         let photosDictionary = photosContainer!["photo"] as? [[String: AnyObject]]
-        //let URLCount = photosDictionary!.count        // number of photos returned, which is constrained in flickr request
         var photoURLArray:[String] = []
-        print("photosDictionary!.count = \(photosDictionary!.count)")
         
             for item in photosDictionary! {             // Get the URL strings
                 guard let imageURLString = item["url_m"] as? String else {
@@ -137,66 +94,10 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
                 photoURLArray.append(imageURLString)    // store URL string at the key
             }
         
+        
         return photoURLArray
     
     }
-    
-    
-    func checkForNetworkErrors(data: NSData?, error: NSError?) throws {
-        
-        guard error == nil else {
-            switch error!.code {
-            case -1009:
-                throw Status.codeIs.network(type: Status.ErrorTypeIs.flickr, error: error!)
-            default:
-                throw Status.codeIs.nserror(type: Status.ErrorTypeIs.flickr, error: error!)
-            }
-        }
-        
-        guard data != nil else {    // Was there any data returned?
-            throw Status.codeIs.noFlickrDataReturned
-        }
-        
-    }
-    
-    
-    func checkForParseErrors(parsedResult: AnyObject?) throws -> Int {
-        
-        guard parsedResult != nil else {
-            throw Status.codeIs.couldNotParseData
-        }
-        
-        guard let stat = parsedResult!["stat"] as? String where stat == "ok" else {  // GUARD: Did Flickr return an error?
-            throw Status.codeIs.couldNotFindKey(type: "Stat")        }
-        
-        guard let photosDictionary = parsedResult!["photos"] as? NSDictionary else { // Is "photos" key in our result?
-            throw Status.codeIs.couldNotFindKey(type: "Photos")
-        }
-        
-        guard let totalPages = (photosDictionary["pages"] as? Int) else { // Is "pages" key in the photosDictionary?
-            throw Status.codeIs.couldNotFindKey(type: "Pages")
-        }
-        
-        print("photosDict = \(photosDictionary)")
-        
-        return totalPages
-    
-    }
-
-    func setUpRequest (pin: Pin) -> NSURLRequest {
-        
-        var methodArguments = Constants.FlickrAPI.methodArguments
-        
-        methodArguments["page"] = pin.numOfPages as NSNumber
-        methodArguments["bbox"] = createBoundingBoxString(pin.latitude as Double, longitude: pin.longitude as Double)
-        
-        let urlString = Constants.FlickrAPI.BASE_URL + escapedParameters(methodArguments)
-        let url = NSURL(string: urlString)!
-        return NSURLRequest(URL: url)
- 
-    }
-
-    
     
     // Store photos in Core Data. Cycle through URLDictionary created in calling fund. For each URL, get the photo and store in Core Data
     
@@ -208,7 +109,6 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
             request.predicate = NSPredicate(format: "pin == %@",pin)
             let fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: SharedMethod.sharedContext,sectionNameKeyPath: nil,cacheName: nil)
 
-            
             try fetchedResultsController.performFetch()
             let fetchedObjects = fetchedResultsController.fetchedObjects
             if fetchedObjects!.count > 0 {
@@ -233,7 +133,6 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
                                     completionHandler(status: error)
                                     
                                 }
-                        
     
                             } //end of do
                         }   // end of completion handler
@@ -249,66 +148,67 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
             completionHandler(status:Status.codeIs.accessSavedData(code: error.code, text: Status.ErrorTypeIs.photoError))
         }
         
-        // CHECK THIS
-        
         GlobalVar.sharedInstance.photosDownloadIsInProcess = false  // photo download completed
     }
     
     
-    /*func storePhotos(pin: Pin, completionHandler: (inner: () throws -> Bool) -> Void) {
-        let session = NSURLSession.sharedSession()
-        for (key, photoURL) in URLDictionary {
-            let URLString = NSURL(string: photoURL)
-            let request = NSMutableURLRequest(URL: URLString!)
-            request.HTTPMethod = "GET"
-            let task = session.dataTaskWithRequest(request) { (data,response, error) in
-                do {
-                    //try self.checkForFlickrDataReturned(data, response: response, error: error)   // Any Flickr errors?
-                    if let data = data {
-                        // save in DB
-                        let dictionary : [String : AnyObject] = [
-                            Photo.Keys.Key : key as String,
-                            Photo.Keys.ImageData : data as NSData,
-                            Photo.Keys.Pin : pin as Pin
-                        ]
-                        let _ = Photo(dictionary: dictionary, context: SharedMethod.sharedContext)
-                    }
-                    CoreDataStackManager.sharedInstance.saveContext()
-                } catch let error as NSError {
-                    let throwError = Status.codeIs.nserror(type: Status.ErrorTypeIs.flickr, error: error)
-                    completionHandler(inner: { throw throwError})
-                }
-                completionHandler(inner: {true})
-                
-            }
-            task.resume()
-        }
-        GlobalVar.sharedInstance.photosDownloadIsInProcess = false  // photo download completed
-    }*/
+    func setUpRequest (pin: Pin) -> NSURLRequest {
+        
+        var methodArguments = Constants.FlickrAPI.methodArguments
+        
+        methodArguments["page"] = Int(arc4random_uniform(UInt32(NSInteger(pin.numOfPages))) + 1)
+        
+        methodArguments["bbox"] = createBoundingBoxString(pin.latitude as Double, longitude: pin.longitude as Double)
+        
+        let urlString = Constants.FlickrAPI.BASE_URL + escapedParameters(methodArguments)
+        let url = NSURL(string: urlString)!
+        return NSURLRequest(URL: url)
+        
+    }
     
 
-    // MARK: Helper functions
-    
-    // Check if flickr data is returned by checking various status codes
-    
-    /*func checkForFlickrDataReturned(data: NSData?, response: NSURLResponse?, error: NSError?) throws -> Void {
+    func checkForNetworkErrors(data: NSData?, error: NSError?) throws {
         
-        guard error?.code != -1009 else {
-            throw Status.codeIs.network(type: Status.ErrorTypeIs.flickr, error: error!)
+        guard error == nil else {
+            switch error!.code {
+            case -1009:
+                throw Status.codeIs.network(type: Status.ErrorTypeIs.flickr, error: error!)
+            default:
+                throw Status.codeIs.nserror(type: Status.ErrorTypeIs.flickr, error: error!)
+            }
         }
         
-        guard (error == nil)  else {    // was there an error returned?
-            throw Status.codeIs.nserror(type: Status.ErrorTypeIs.flickr, error: error!)
+        guard data != nil else {    // Was there any data returned?
+            throw Status.codeIs.noFlickrDataReturned
         }
         
-        guard let statusCode = (response as? NSHTTPURLResponse)?.statusCode where statusCode >= 200 && statusCode <= 299 else { // Did we get a successful 2XX response?
-            let flickrStatus = (response as? NSHTTPURLResponse)?.statusCode
-            throw Status.codeIs.flickrStatus(statusCode: flickrStatus!)
+    }
+    
+    
+    func getTotalPagesAvail(parsedResult: AnyObject?) throws -> Int {
+        
+        guard parsedResult != nil else {
+            throw Status.codeIs.couldNotParseData
         }
-    
-    }*/
-    
-    
+        
+        guard let stat = parsedResult!["stat"] as? String where stat == "ok" else {  // GUARD: Did Flickr return an error?
+            throw Status.codeIs.couldNotFindKey(type: "Stat")        }
+        
+        guard let photosDictionary = parsedResult!["photos"] as? NSDictionary else { // Is "photos" key in our result?
+            throw Status.codeIs.couldNotFindKey(type: "Photos")
+        }
+        
+        guard var totalPages = (photosDictionary["pages"] as? Int) else { // Is "pages" key in the photosDictionary?
+            throw Status.codeIs.couldNotFindKey(type: "Pages")
+        }
+        // make sure flickr will return less than 4000 photos else will get duplicate photos for different pages
+        if totalPages > Constants.maxPageNumFromFlickr {totalPages = Constants.maxPageNumFromFlickr}
+        
+        return totalPages
+        
+    }
+
+
     // Lat/Lon Manipulation
     
     func createBoundingBoxString(latitude: Double, longitude: Double) -> String {

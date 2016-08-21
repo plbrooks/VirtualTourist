@@ -12,6 +12,8 @@ class Constants: NSObject {
     
     static let databaseName = "VirtualTourist.sqlite"
     static let notificationKey = "PhotoCount"
+    // make sure flickr will return less than 4000 photos else will get duplicate photos for different pages
+    static let maxPageNumFromFlickr = Int(4000/21)
     
     struct modelURL {
         static let name = "Model"
@@ -41,7 +43,7 @@ class Constants: NSObject {
             "format": "json",
             "nojsoncallback": "1",
             "bbox": "1.0,2.0,3.0,4.4",              // string of the lat / longitude of the 2 bottom-left and top-right corners
-            "page": 1,                             // page # being returned
+            "page": 1,                             // page to be returned
             "per_page": 21
         ]
     }
