@@ -31,6 +31,12 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
     var selectedLocation: CLLocationCoordinate2D?
     var selectedPin: Pin?
     
+    // MARK: Enums
+    
+    enum CellTap {
+        case edit
+        case done
+    }
     
     // MARK: Lazy fetched results controllers
     
