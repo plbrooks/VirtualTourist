@@ -132,16 +132,22 @@
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="downloading.png" translatesAutoresizingMaskIntoConstraints="NO" id="63l-fO-aXq">
                                                     <rect key="frame" x="0.0" y="0.0" width="186" height="186"/>
                                                 </imageView>
+                                                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="bX9-Mi-kZZ" userLabel="ActivityIndicator">
+                                                    <rect key="frame" x="83" y="83" width="20" height="20"/>
+                                                </activityIndicatorView>
                                             </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                         <constraints>
+                                            <constraint firstItem="bX9-Mi-kZZ" firstAttribute="centerY" secondItem="1tA-fS-tnK" secondAttribute="centerY" id="6Pt-LE-VVw"/>
                                             <constraint firstItem="63l-fO-aXq" firstAttribute="leading" secondItem="1tA-fS-tnK" secondAttribute="leadingMargin" constant="-8" id="Fnc-Lj-tLP"/>
                                             <constraint firstAttribute="trailingMargin" secondItem="63l-fO-aXq" secondAttribute="trailing" constant="-8" id="GdZ-Tu-htv"/>
                                             <constraint firstAttribute="bottomMargin" secondItem="63l-fO-aXq" secondAttribute="bottom" constant="-8" id="e6F-cF-P5E"/>
                                             <constraint firstItem="63l-fO-aXq" firstAttribute="top" secondItem="1tA-fS-tnK" secondAttribute="topMargin" constant="-8" id="k1H-gI-bcJ"/>
+                                            <constraint firstItem="bX9-Mi-kZZ" firstAttribute="centerX" secondItem="1tA-fS-tnK" secondAttribute="centerX" id="yfm-y8-wHW"/>
                                         </constraints>
                                         <connections>
+                                            <outlet property="activityIndicator" destination="bX9-Mi-kZZ" id="FD6-AS-qki"/>
                                             <outlet property="image" destination="63l-fO-aXq" id="CPd-5H-k2v"/>
                                         </connections>
                                     </collectionViewCell>

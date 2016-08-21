@@ -148,8 +148,13 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
         cell.backgroundColor = UIColor.whiteColor() // make cell more visible
         if (photo.imageData != nil) {
             cell.image.image = UIImage(data: photo.imageData!)
+            cell.activityIndicator.hidden = true
+            cell.activityIndicator.stopAnimating()
+
         } else {
             cell.image.image = UIImage(named: "downloading.png")
+            cell.activityIndicator.hidden = false
+            cell.activityIndicator.startAnimating()
         }
         cell.contentView.layoutIfNeeded()
         cell.contentView.layoutSubviews()
@@ -220,6 +225,7 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
         default:
             break
         }
+
     }
     
     

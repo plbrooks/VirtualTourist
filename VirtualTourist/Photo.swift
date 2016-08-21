@@ -24,6 +24,7 @@ class Photo : NSManagedObject {
         super.init(entity: entity, insertIntoManagedObjectContext: context)
         key = dictionary[Keys.Key] as! String
         if dictionary[Keys.ImageData] != nil {
+            print("imagedata not nil")
             imageData = dictionary[Keys.ImageData] as? NSData
         }
         pin = dictionary[Keys.Pin] as! Pin
