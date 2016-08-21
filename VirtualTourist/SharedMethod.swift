@@ -8,9 +8,8 @@
 
 class SharedMethod {
     
-    /********************************************************************************************************
-     * Shared instance constants used to improve readability in methods                                     *
-     ********************************************************************************************************/
+    
+    // Shared instance constants used to improve readability in methods
     
     static let  errorMessage                    =   SharedServices.sharedInstance.errorMessage
     static let  presentingVC                    =   SharedServices.sharedInstance.presentingVC

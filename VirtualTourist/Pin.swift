@@ -1,15 +1,15 @@
-import UIKit
 import CoreData
-import Foundation
 
 class Pin : NSManagedObject {
     
+    // Keys of dict used to create new Pin
     struct Keys {
         static let Latitude = "latitude"
         static let Longitude = "longitude"
         static let numOfPages = "numOfPages"
     }
     
+    // Pin vars
     @NSManaged var latitude: NSNumber
     @NSManaged var longitude: NSNumber
     @NSManaged var numOfPages: NSNumber
@@ -21,6 +21,7 @@ class Pin : NSManagedObject {
     
     }
     
+    // create Pin processing
     init(dictionary: [String : AnyObject], context: NSManagedObjectContext) {
         
         let entity =  NSEntityDescription.entityForName("Pin", inManagedObjectContext: context)!
@@ -28,9 +29,9 @@ class Pin : NSManagedObject {
         latitude = dictionary[Keys.Latitude] as! NSNumber
         longitude = dictionary[Keys.Longitude] as! NSNumber
         if (dictionary[Keys.numOfPages] == nil) || (dictionary[Keys.numOfPages] as! NSNumber == 0) {
-            numOfPages = 1
+            numOfPages = 1  // default to page 1
         } else {
-            numOfPages = dictionary[Keys.numOfPages] as! NSNumber
+            numOfPages = dictionary[Keys.numOfPages] as! NSNumber   // use value from dictionary
         }
     
     }

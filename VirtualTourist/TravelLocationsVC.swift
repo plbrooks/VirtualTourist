@@ -161,7 +161,7 @@ class TravelLocationsVC: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
         }
     }
     
-    // MARK: Core Data fetched results controller functions
+    // MARK: Core Data functions
     
     // Get all pins on the map
 

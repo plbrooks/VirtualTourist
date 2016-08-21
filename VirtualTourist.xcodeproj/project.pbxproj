@@ -20,13 +20,13 @@
 		D02A7A181C60FF6D00510439 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D02A7A161C60FF6D00510439 /* Model.xcdatamodeld */; };
 		D03D8E381C68244E00B6ADE6 /* SharedNetworkServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = D03D8E371C68244E00B6ADE6 /* SharedNetworkServices.swift */; };
 		D04256B91D5F6AD9008303BF /* README in Resources */ = {isa = PBXBuildFile; fileRef = D04256B81D5F6AD9008303BF /* README */; };
+		D04256BB1D69DBFF008303BF /* downloading.png in Resources */ = {isa = PBXBuildFile; fileRef = D04256BA1D69DBFF008303BF /* downloading.png */; };
 		D052C8F01C64F97B002C9DB5 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D052C8EF1C64F97B002C9DB5 /* Constants.swift */; };
 		D052C8F51C650111002C9DB5 /* Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = D052C8F41C650111002C9DB5 /* Status.swift */; };
 		D052C8F81C653A7F002C9DB5 /* SharedServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = D052C8F71C653A7F002C9DB5 /* SharedServices.swift */; };
 		D052C8FA1C653BF8002C9DB5 /* SharedMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = D052C8F91C653BF8002C9DB5 /* SharedMethod.swift */; };
 		D052C8FD1C66AC4D002C9DB5 /* PhotoAlbumVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = D052C8FC1C66AC4D002C9DB5 /* PhotoAlbumVC.swift */; };
 		D075E9CE1D5A40210048648B /* GlobalVar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D075E9CD1D5A40210048648B /* GlobalVar.swift */; };
-		D075E9D01D5D0D220048648B /* downloading.png in Resources */ = {isa = PBXBuildFile; fileRef = D075E9CF1D5D0D220048648B /* downloading.png */; };
 		D0F7953F1D333AE6008CD91B /* PhotoCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F7953E1D333AE6008CD91B /* PhotoCollectionViewCell.swift */; };
 /* End PBXBuildFile section */
 
@@ -67,13 +67,13 @@
 		D02A7A171C60FF6D00510439 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		D03D8E371C68244E00B6ADE6 /* SharedNetworkServices.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharedNetworkServices.swift; sourceTree = "<group>"; };
 		D04256B81D5F6AD9008303BF /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README; path = VirtualTourist/README; sourceTree = "<group>"; };
+		D04256BA1D69DBFF008303BF /* downloading.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = downloading.png; sourceTree = "<group>"; };
 		D052C8EF1C64F97B002C9DB5 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		D052C8F41C650111002C9DB5 /* Status.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Status.swift; sourceTree = "<group>"; };
 		D052C8F71C653A7F002C9DB5 /* SharedServices.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharedServices.swift; sourceTree = "<group>"; };
 		D052C8F91C653BF8002C9DB5 /* SharedMethod.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharedMethod.swift; sourceTree = "<group>"; };
 		D052C8FC1C66AC4D002C9DB5 /* PhotoAlbumVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoAlbumVC.swift; sourceTree = "<group>"; };
 		D075E9CD1D5A40210048648B /* GlobalVar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalVar.swift; sourceTree = "<group>"; };
-		D075E9CF1D5D0D220048648B /* downloading.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = downloading.png; sourceTree = "<group>"; };
 		D0F7953E1D333AE6008CD91B /* PhotoCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoCollectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -130,7 +130,7 @@
 				D02A79EA1C5C730800510439 /* Main.storyboard */,
 				D02A79EF1C5C730800510439 /* LaunchScreen.storyboard */,
 				D0F7953E1D333AE6008CD91B /* PhotoCollectionViewCell.swift */,
-				D075E9CF1D5D0D220048648B /* downloading.png */,
+				D04256BA1D69DBFF008303BF /* downloading.png */,
 				D052C8FB1C657F29002C9DB5 /* VCs */,
 				D052C8F61C650122002C9DB5 /* CoreDataServices */,
 				D02A7A1D1C6104AC00510439 /* Model */,
@@ -304,8 +304,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				D04256B91D5F6AD9008303BF /* README in Resources */,
-				D075E9D01D5D0D220048648B /* downloading.png in Resources */,
 				D02A79F11C5C730800510439 /* LaunchScreen.storyboard in Resources */,
+				D04256BB1D69DBFF008303BF /* downloading.png in Resources */,
 				D02A79EE1C5C730800510439 /* Assets.xcassets in Resources */,
 				D02A79EC1C5C730800510439 /* Main.storyboard in Resources */,
 			);

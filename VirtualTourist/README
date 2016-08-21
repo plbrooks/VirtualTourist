@@ -20,6 +20,25 @@ flickr downloads are initiated:
         b. The user pressed the "New Collection" button
 
 
+PHOTO PROCESSING FLOW
+
+TravelLocationsVC
+
+1. Pin is created
+2. The savePhotos func in SharedNetworkServices is called.
+    a. Flickr "page 1" downloaded for the pin location. Max 21 photos per page.
+    b. Pin entity "totalNumOfPages" attribute updated with total number of pages available for this pin. To be used to generate random page number when "New Collection" button is pressed (PhotoAlbumsVC).
+    c. One Photo entity created for each downloaded photo. Photo entity Key attribute is URL.
+    d. Once all Photo entities are created, the Photo entitities for the Pin are cycled through. For each key (URL), a flickr download of the image is innitiated. The image is stored in Core Data Photo entity using the "Allows external storage" option.
+
+
+PhotoAlbumVC - "New Collection" button processing
+
+1. Delete all current photos associated with the selected Pin.
+2. Perform savePhotos func processing as described above.
+3. Only difference is that rather than download flickr "page 1", a random page number will be generated using the Pin's "totalNumOfPages" attribute.
+
+
 FOLDERS / FILES
 
 The design has 5 primary folders:

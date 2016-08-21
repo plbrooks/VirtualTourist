@@ -20,6 +20,7 @@ class SharedServices: NSObject {
 
     
     // MARK: Error Processing
+    
     // Convert error codes to error messages. Add in variable text as needed.
     
     func errorMessage(err: ErrorType) -> String {
@@ -76,7 +77,7 @@ class SharedServices: NSObject {
     }
        
     
-    // Show an alert. Message is from mesasge list in the common "Status" file  
+    // Show an alert. Message is from message list in the common "Status" file
     
     func showAlert (error: ErrorType, title: String) {
         let vc = presentingVC()
@@ -92,7 +93,7 @@ class SharedServices: NSObject {
         }
     }
 
-    // MARK: Map activity indicator setup
+    // Map activity indicator setup
 
    func setActivityIndicator(option: String, mapView: MKMapView, activityIndicator: UIActivityIndicatorView ) {
         switch(option) {
@@ -108,8 +109,8 @@ class SharedServices: NSObject {
         }
     }
     
-    // MARK: Find current VC
-    // Used in func ShowAlert to get the present VC
+    
+    // Find current VC. Used in func ShowAlert to get the present VC
     
     func  presentingVC() -> UIViewController? {
         var topController = UIApplication.sharedApplication().keyWindow?.rootViewController

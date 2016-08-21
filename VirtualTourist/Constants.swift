@@ -42,8 +42,8 @@ class Constants: NSObject {
             "extras": "url_m",
             "format": "json",
             "nojsoncallback": "1",
-            "bbox": "1.0,2.0,3.0,4.4",              // string of the lat / longitude of the 2 bottom-left and top-right corners
-            "page": 1,                             // page to be returned
+            "bbox": "1.0,2.0,3.0,4.4",  // string of the lat / longitude of the 2 bottom-left and top-right corners
+            "page": 1,                  // page to be returned
             "per_page": 21
         ]
     }

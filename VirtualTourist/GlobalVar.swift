@@ -8,9 +8,12 @@
 
 import Foundation
 
+
+// used to store vars used in many classes
 class GlobalVar: NSObject {
     static let sharedInstance = GlobalVar()    // set up shared instance class
     private override init() {}
+    
     
     var photosDownloadIsInProcess = false
     

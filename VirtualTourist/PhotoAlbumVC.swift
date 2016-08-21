@@ -30,8 +30,6 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
     var updatedIndexPaths:  [NSIndexPath]!
     
     
-    // MAY NOT NEED
-    
     // MARK: Lazy frc
     
     lazy var photoFetchedResultsController: NSFetchedResultsController = {
@@ -150,6 +148,8 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
         cell.backgroundColor = UIColor.whiteColor() // make cell more visible
         if (photo.imageData != nil) {
             cell.image.image = UIImage(data: photo.imageData!)
+        } else {
+            cell.image.image = UIImage(named: "downloading.png")
         }
         cell.contentView.layoutIfNeeded()
         cell.contentView.layoutSubviews()
@@ -195,7 +195,6 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
         deletedIndexPaths = [NSIndexPath]()
         updatedIndexPaths = [NSIndexPath]()
     }
-    
     
     
     // Handle changes to the indexPath
@@ -272,6 +271,5 @@ class PhotoAlbumVC: UIViewController, MKMapViewDelegate, NSFetchedResultsControl
         
         SharedMethod.setActivityIndicator("FINISH", mapView: mapView, activityIndicator: activityIndicator)
     }
-    
  
 }

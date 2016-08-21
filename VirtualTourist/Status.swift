@@ -22,8 +22,7 @@ class Status: NSObject {
         case network                    (type: String, error: NSError)
         case flickrStatus               (statusCode: Int)
         case pinNotFound
-        //case pinError                   (error: NSError)
-        //case photoError                 (error: NSError)
+    
     }
     
     

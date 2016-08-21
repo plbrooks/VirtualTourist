@@ -16,11 +16,13 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
     private override init() {}                              // ensure no one will init
     
 
+    // top level func used to save photos of a Pin
+    
     func savePhotos(pin: Pin, completionHandler:(status: ErrorType) -> Void)  {
 
-        GlobalVar.sharedInstance.photosDownloadIsInProcess = true   // photo downloads are in process
-        self.getURLsFromFlickr(pin, completionHandler: { (status) in
-            self.storePhotos(pin, completionHandler: { (status) in
+        GlobalVar.sharedInstance.photosDownloadIsInProcess = true   // image downloads are in process
+        self.saveFlickrURLsToPin(pin, completionHandler: { (status) in
+            self.saveImagesToPin(pin, completionHandler: { (status) in
                 GlobalVar.sharedInstance.photosDownloadIsInProcess = false
                 completionHandler(status: status)
             })
@@ -28,7 +30,10 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
         })
     }
 
-    func getURLsFromFlickr(pin: Pin, completionHandler:(status: ErrorType) -> Void) {
+    
+    // First, get the URLs of photos to be saved to a Pin
+    
+    func saveFlickrURLsToPin(pin: Pin, completionHandler:(status: ErrorType) -> Void) {
         let request = setUpRequest(pin)
         let session = NSURLSession.sharedSession()
         let task = session.dataTaskWithRequest(request) { (data,response, error) in
@@ -42,9 +47,9 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
                         let totalPages = try self.getTotalPagesAvail(parsedResult)
                         pin.numOfPages = totalPages
                         do {
-                            
+                            // add the URLs of images to an array from the one page returned in flickr
                             let photoURLArray = try self.createArrayOfPhotoURLsFromParsedResult(parsedResult)
-                                for item in photoURLArray! {
+                                for item in photoURLArray! {    // create Photo entities for each URL in the array. Key is URL. Image to be added later.
                                     let dictionary : [String : AnyObject] = [
                                         Photo.Keys.Key : item,
                                         Photo.Keys.Pin : pin as Pin
@@ -52,16 +57,10 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
                                     let _ = Photo(dictionary: dictionary, context: SharedMethod.sharedContext)
                             }
                         } catch {
-                            completionHandler(status:error)
-                            /*storePhotos(pin, completionHandler: {(status) {
-                                
-                            })*/
+                            completionHandler(status:error) // errror creating array
                         }
                     
                         SharedMethod.saveContext()
-                    
-                        // MAKE SURE HANDLED
-                        
                         completionHandler(status:Status.codeIs.noError)
                         
                     } catch {                               // parse error
@@ -81,6 +80,9 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
         
     }
     
+    
+    // Create an array of URLs from the flickr page
+    
     func createArrayOfPhotoURLsFromParsedResult (parsedResult: AnyObject!) throws -> NSArray? {
         
         let photosContainer = parsedResult["photos"] as? NSDictionary
@@ -99,9 +101,10 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
     
     }
     
-    // Store photos in Core Data. Cycle through URLDictionary created in calling fund. For each URL, get the photo and store in Core Data
     
-    func storePhotos(pin: Pin, completionHandler:(status: ErrorType) -> Void) {
+    // Store photos in Core Data. Cycle through the photos entities created for the pin. For the entity URL (key), get the image and store in Core Data
+    
+    func saveImagesToPin(pin: Pin, completionHandler:(status: ErrorType) -> Void) {
         do {
             
             let request = NSFetchRequest(entityName: "Photo")
@@ -112,7 +115,7 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
             try fetchedResultsController.performFetch()
             let fetchedObjects = fetchedResultsController.fetchedObjects
             if fetchedObjects!.count > 0 {
-                for photo in fetchedObjects as! [Photo] {
+                for photo in fetchedObjects as! [Photo] {   // for each Photo associated with the Pin call flickr to get the image
                     if photo.imageData == nil {
                         let session = NSURLSession.sharedSession()
                         let URLString = NSURL(string: photo.key)
@@ -124,8 +127,8 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
                                 do {
                                     
                                     try self.checkForNetworkErrors(data, error: error)
-                                    photo.imageData = data
-                                    SharedMethod.saveContext()
+                                    photo.imageData = data             // save the image to the Photo
+                                    SharedMethod.saveContext()      // save it
                                     completionHandler(status: Status.codeIs.noError)
                 
                                 } catch {   // Network error
@@ -152,6 +155,10 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
     }
     
     
+    // MARK: Helper functions
+    
+    // Create flickr request
+    
     func setUpRequest (pin: Pin) -> NSURLRequest {
         
         var methodArguments = Constants.FlickrAPI.methodArguments
@@ -166,6 +173,8 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
         
     }
     
+    
+    // Any network errors when accessing flickr?
 
     func checkForNetworkErrors(data: NSData?, error: NSError?) throws {
         
@@ -185,6 +194,11 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
     }
     
     
+    // Process parsed data, get the total # of flickr pages available at this location.
+    // If based on the # of pages and Per_Page flickr parm (# of pages returned per page), if more than 4,000 photos 
+    //   can be returned, restrict the total pages in use to return less than 4,000 photos.
+    //   This is to ensure new photos will always be returned, avoid having the same photos returned in different pages
+    
     func getTotalPagesAvail(parsedResult: AnyObject?) throws -> Int {
         
         guard parsedResult != nil else {
@@ -201,7 +215,7 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
         guard var totalPages = (photosDictionary["pages"] as? Int) else { // Is "pages" key in the photosDictionary?
             throw Status.codeIs.couldNotFindKey(type: "Pages")
         }
-        // make sure flickr will return less than 4000 photos else will get duplicate photos for different pages
+        // Make sure flickr will return less than 4,000 photos else will get duplicate photos for different pages
         if totalPages > Constants.maxPageNumFromFlickr {totalPages = Constants.maxPageNumFromFlickr}
         
         return totalPages
@@ -209,7 +223,7 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
     }
 
 
-    // Lat/Lon Manipulation
+    // Lat/Lon manipulation to avoid missing a location due to rounding errors caused converting lat / lon from double to NSNumber and back
     
     func createBoundingBoxString(latitude: Double, longitude: Double) -> String {
         
@@ -222,7 +236,7 @@ class SharedNetworkServices: NSObject, NSFetchedResultsControllerDelegate {
     }
 
 
-    // Escape HTML Parameters
+    // Process escape HTML Parameters
     
     func escapedParameters(parameters: [String : AnyObject]) -> String {
         
