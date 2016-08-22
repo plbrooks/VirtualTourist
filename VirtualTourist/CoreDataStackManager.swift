@@ -51,9 +51,7 @@ class CoreDataStackManager: NSObject {
     
     lazy var persistentStoreCoordinator: NSPersistentStoreCoordinator? = {
         let coordinator: NSPersistentStoreCoordinator? = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
-        //let url = self.applicationDocumentsDirectory.URLByAppendingPathComponent(SQLITE_FILE_NAME)
-        let url = NSURL(string: "file:///Users/Peter/Desktop/VirtualTouristDB/VirtualTourist.sqlite")!
-        print("sqlite path: \(url.path!)")        
+        let url = self.applicationDocumentsDirectory.URLByAppendingPathComponent(SQLITE_FILE_NAME)
         do {
             try coordinator!.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: url, options: nil)
         } catch let error as NSError {
